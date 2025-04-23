@@ -122,6 +122,10 @@ body {
   color: #00adee;
 }
 
+.spacer {
+  flex-grow: 1;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .menu-toggle {

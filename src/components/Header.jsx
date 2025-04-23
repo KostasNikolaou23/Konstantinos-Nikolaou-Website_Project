@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "../App.css";
 
 import { getSearchResults } from "./API"; // Correct relative path
 
@@ -40,6 +39,11 @@ export function Header() {
           <li><a href="/series">Series</a></li>
           <li><a href="/kids">Kids</a></li>
           <li><a href="/documentaries">Documentaries</a></li>
+
+          {/* Account Functionality */}
+          <li><a href="/user/login">Login</a></li>
+          <li><a href="/user/register">Register</a></li>
+          <li><a href="/user/track">Track</a></li>
         </ul>
       </nav>
       <div className={`search-container ${searchOpen ? "open" : ""}`}>
