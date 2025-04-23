@@ -4,24 +4,16 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "echo",
+			"label": "Start Server",
 			"type": "shell",
-			"command": "echo Hello"
-		},
-		{
-			"label": "npm: build",
-			"type": "shell",
-			"command": "npm run build",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
+			"command": "npm start",
+			"group": "none",
 			"problemMatcher": []
 		},
 		{
-			"label": "npm: start",
+			"label": "Install All Dependencies",
 			"type": "shell",
-			"command": "npm start",
+			"command": "npm install",
 			"group": "none",
 			"problemMatcher": []
 		}
