@@ -1,9 +1,12 @@
 import logo from '../logo.svg'; // Import the logo
 
 import React, { useState } from "react";
-import "../App.css";
 import Header from "../Components/Header";
 import GridItem from "../Components/pages/Home/GridItem"; // Import the new component
+
+import '../App.css'; // Import the CSS file for styling
+import 'bootstrap/dist/css/bootstrap.min.css'; //Bootstrap CSS
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Bootstrap JS
 
 const shows = [
 	{

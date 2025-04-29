@@ -10,6 +10,7 @@ const trackingData = [
 		type: "movie",
 		status: "Watched",
 		startDate: "2023-01-01",
+		progress: 100,
 	},
 	{
 		mvdbID: 67890,
@@ -18,12 +19,30 @@ const trackingData = [
 		season: 1,
 		episode: 1,
 		startDate: "2023-02-01",
+		progress: 0,
 	},
 	{
 		mvdbID: 54321,
 		type: "movie",
 		status: "Watching",
 		startDate: "2023-03-01",
+		progress: 70,
+	},
+	{
+		mvdbID: 12345,
+		type: "series",
+		status: "Watching",
+		season: 2,
+		episode: 5,
+		startDate: "2023-04-01",
+		progress: 30,
+	},
+	{
+		mvdbID: 13579,
+		type: "movie",
+		status: "Watching",
+		startDate: "2023-05-01",
+		progress: 15,
 	},
 ];
 
@@ -57,8 +76,7 @@ export function Track() {
 					const detailsResponse = await API.getMovieDetails(item.mvdbID);
 					console.log(detailsResponse);
 
-					titleData[item.mvdbID] =
-						detailsResponse?.title || "Unknown Title";
+					titleData[item.mvdbID] = detailsResponse?.title || "Unknown Title";
 				} catch (error) {
 					console.error(`Error fetching data for ${item.mvdbID}:`, error);
 				}
@@ -73,9 +91,7 @@ export function Track() {
 		<div className="container">
 			<Header />
 			<center>
-
-                {/* Search function */}
-                
+				{/* Search function */}
 
 				<section className="grid">
 					{trackingData.map((item, index) => {
@@ -90,6 +106,7 @@ export function Track() {
 								name={title} // Use the fetched title here
 								poster={poster}
 								status={item.status}
+								progress={item.progress}
 							/>
 						);
 					})}
