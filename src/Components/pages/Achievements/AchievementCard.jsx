@@ -13,20 +13,24 @@ export function AchievementCard({
 		<div className="card">
 			{/* <img src={poster} alt={name} className="card-image" /> */}
 			<div className="card-content">
-				<h2 class="card-seriesname">{name}</h2>
+				<center>
+				<b><h2 class="card-seriesname">{name}</h2></b>
 				
 
 				<Stack gap={3}>
 
+					<p class="card-description">{description}<br/>
+					Goal: {progress}/{goal}</p>
+
 					<ProgressBar
-						now={progress}
-						label={`${progress}%`}
+						now={(progress/goal)*100}
+						label={`${progress}`}
 						variant={
-							((progress*100)/goal) < 20
+							(progress/goal)*100 < 20
 								? "danger"
-								: ((progress*100)/goal) < 50
+								: (progress/goal)*100 < 50
 								? "warning"
-								: ((progress*100)/goal) < 75
+								: (progress/goal)*100 < 75
 								? "info"
 								: "success"
 						}
@@ -35,6 +39,7 @@ export function AchievementCard({
 					/>
 					
 				</Stack>
+				</center>	
 			</div>
 		</div>
 	);

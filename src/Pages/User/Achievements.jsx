@@ -22,13 +22,13 @@ var achievemnts = [
 		title: "Hello?!?!",
 		desc: "Watch 10 horror movies",
 		goal: 10,
-		progress: 10,
+		progress: 4,
 	},
 	{
 		title: "I AM BATMAN",
 		desc: "Watch 25 superhero movies",
 		goal: 25,
-		progress: 10,
+		progress: 25,
 	},
 
 ]

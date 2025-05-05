@@ -12,15 +12,25 @@ body {
   color: #ffffff;
 }
 
-/* Ensure the container takes up the full screen */
+
 .container {
+  /* 
+  TODO: This is problematic and needs readjustment,
+  It doesn't utilize the full width of the screen and has a lot of padding on the left and right side.
+  */
+  
   display: flex;
   flex-direction: column;
   flex: 1; /* Allow the container to grow and take up available space */
-  width: 100%; /* Ensure it spans the full width */
+  width: 190%; /* Ensure it spans the full width */
   height: 100%; /* Ensure it spans the full height */
   padding: 0; /* Remove any default padding */
-  margin: 0; /* Remove any default margin */
+  margin: auto; /* Remove any default margin */
+  padding-left: -10;
+  padding-right: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
+  padding-left: 0px;
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
