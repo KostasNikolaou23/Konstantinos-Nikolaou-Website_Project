@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "../../Components/API"; // Import the API component
-import GridCard from "../../Components/pages/Track/GridCard";
+import GridCard from "../../Components/pages/User/Track/GridCard";
 
 // Sample data for tracking
 const trackingData = [

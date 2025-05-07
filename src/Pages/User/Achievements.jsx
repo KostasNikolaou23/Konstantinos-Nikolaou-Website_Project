@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import API from "../../Components/API"; // Import the API component
-import AchievementCard from "../../Components/pages/Achievements/AchievementCard";
+import AchievementCard from "../../Components/pages/User/Achievements/AchievementCard";
 
 var achievemnts = [
 	{
