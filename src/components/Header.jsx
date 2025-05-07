@@ -47,7 +47,6 @@ export function Header() {
 							<Nav.Link href="/series">TV Series</Nav.Link>
 							<Nav.Link href="/kids">Kid Shows</Nav.Link>
 							<Nav.Link href="/documentaries">Documentaries</Nav.Link>
-							<Nav.Link href="/user/mylist">My List</Nav.Link>
 						</Nav>
 
 						<div className="right-container">
@@ -58,6 +57,11 @@ export function Header() {
 
 								{accountOpen && (
 									<ul className="dropdown-menu show account-dropdown">
+										<li>
+											<a className="dropdown-item" href="/user/mylist">
+												My List
+											</a>
+										</li>
 										<li>
 											<a className="dropdown-item" href="/user/achievements">
 												Achievements

@@ -34,6 +34,7 @@ body {
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
+/* Header */
 .header {
   justify-content: space-between;
   align-items: center;
@@ -51,10 +52,29 @@ font-size: 2.5rem;
 color: #00adee;
 }
 
+/* Footer */
 .footer {
-  /* centered  */
-
+  background-color: #1e1e1e;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  align-content: center;
+  margin-top: 40px;
+  padding-top: 50px;
+  padding-right: 300px; /* Κεντράρισμα περιεχομένου */
+  width: 100%; /* Κατάληψη όλου του ορι΄ζοντιου χώρου */
 }
+
+.footer-content a {
+  color: #00adee;
+  margin: 0 10px;
+  text-decoration: none;
+  }
+  
+.footer-content a:hover {
+text-decoration: underline;
+}
+
 
 .search-container {
   display: flex;
@@ -264,25 +284,7 @@ margin-left: auto; /* Push to the far right */
 gap: 15px; /* Add spacing between the dropdown and search button */
 }
 
-/* Footer styling to stick to the bottom */
-.footer-container {
-  background-color: #1e1e1e;
-  color: #fff;
-  padding: 20px;
-  text-align: center;
-  margin-top: auto; /* Push the footer to the bottom */
-  width: 100%; /* Ensure it spans the full width */
-}
 
-.footer-content a {
-color: #00adee;
-margin: 0 10px;
-text-decoration: none;
-}
-
-.footer-content a:hover {
-text-decoration: underline;
-}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
