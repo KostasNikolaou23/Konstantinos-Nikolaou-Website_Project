@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Header from "../../Components/Header";
-import Footer from "../../Components/Footer";
 import API from "../../Components/API"; // Import the API component
 import AchievementCard from "../../Components/pages/Achievements/AchievementCard";
 
@@ -30,6 +28,12 @@ var achievemnts = [
 		goal: 25,
 		progress: 25,
 	},
+	{
+		title: "Lorem ipsum",
+		desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		goal: 100,
+		progress: 99,
+	}
 
 ]
 
@@ -37,7 +41,6 @@ export function Achievements({}) {
 
 	return (
 		<div className="container">
-			<Header />
 			<section className="grid">
 				{achievemnts.map((achievement, index) => (
 					<AchievementCard
@@ -49,8 +52,6 @@ export function Achievements({}) {
 					/>
 				))}
 			</section>
-
-			<Footer />
 		</div>
 	);
 }

@@ -1,11 +1,6 @@
-import Header from '../../Components/Header';
-
-
 export function Login() {
 	return (
 	<div className="container">
-		<Header />
-
 		<center>
 		<div className="card">
 			<h1>Login</h1>

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Header from "../Components/Header";
-import Footer from "../Components/Footer";
 import GridItem from "../Components/pages/Home/GridItem";
 import { getTrendingContent } from "../Components/API";
 
@@ -30,7 +28,6 @@ function Home() {
 
     return (
         <div className="container fluid">
-            <Header />
 
             {/* Movies Section */}
             <div className="row align-items-center">
@@ -87,8 +84,6 @@ function Home() {
                     <p>No TV series available at the moment.</p>
                 )}
             </section>
-
-            <Footer />
         </div>
     );
 }

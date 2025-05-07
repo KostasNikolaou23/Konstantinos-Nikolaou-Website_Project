@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Header from "../../Components/Header";
 import API from "../../Components/API"; // Import the API component
 import GridCard from "../../Components/pages/Track/GridCard";
 
@@ -89,7 +88,6 @@ export function Track() {
 
 	return (
 		<div className="container">
-			<Header />
 			<center>
 				{/* Search function */}
 

@@ -1,10 +1,6 @@
-import Header from '../../Components/Header';
-
-
 export function Register() {
 	return (
 	<div className="container">
-		<Header />
 
 		<center>
 		<div className="card">
