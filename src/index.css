@@ -22,11 +22,11 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1; /* Allow the container to grow and take up available space */
-  width: 190%; /* Ensure it spans the full width */
+  width: 100%; /* Ensure it spans the full width */
   height: 100%; /* Ensure it spans the full height */
   padding: 0; /* Remove any default padding */
   margin: auto; /* Remove any default margin */
-  padding-left: -10;
+  padding-left: 0px;
   padding-right: 0px;
   margin-right: 0px;
   margin-left: 0px;
@@ -35,11 +35,15 @@ body {
 }
 
 .header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-width: 100%;
-margin-bottom: 40px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 40px;
+  color: #1e1e1e;
+}
+
+.navbar {
+  color: #1e1e1e;
 }
 
 .header h1 {
@@ -47,20 +51,25 @@ font-size: 2.5rem;
 color: #00adee;
 }
 
+.footer {
+  /* centered  */
+
+}
+
 .search-container {
-display: flex;
-align-items: center;
-position: relative;
-margin-left: auto; /* Push the search container to the right */
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-left: auto; /* Push the search container to the right */
 }
 
 .search-input {
-margin-left: 10px;
-padding: 8px;
-border: 1px solid #ccc;
-border-radius: 4px;
-font-size: 1rem;
-width: 250px;
+  margin-left: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 250px;
 }
 
 /* Grid section styling */
@@ -75,12 +84,11 @@ width: 250px;
 }
 
 .card {
-background-color: #1e1e1e;
-border-radius: 10px;
-overflow: hidden;
-display: flex;
-flex-direction: column;
-transition: transform 0.2s ease-in-out;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  transition: transform 0.2s ease-in-out;
 }
 
 .card:hover {
@@ -95,7 +103,7 @@ object-fit: cover;
 
 .card-content {
   display: flex; /* Enable flexbox */
-  flex-direction: column; /* Stack content vertically */
+  flex-direction: column; /* Εδω δυστηχώς το χρειάζεται */
   justify-content: space-between; /* Push content to the top and bottom */
   padding: 5%;
   height: 100%; /* Ensure it takes the full height of the card */
@@ -161,7 +169,6 @@ gap: 20px;
 /* Responsive Styles */
 @media (max-width: 768px) {
   .menu {
-    flex-direction: column;
     background-color: #1e1e1e;
     position: absolute;
     right: 0;
