@@ -20,7 +20,7 @@ export function AchievementCard({
 				<Stack gap={3}>
 
 					<p class="card-description">{description}<br/>
-					Goal: {progress}/{goal}</p>
+					Goal: {goal}</p>
 
 					<ProgressBar
 						now={(progress/goal)*100}
@@ -28,9 +28,9 @@ export function AchievementCard({
 						variant={
 							(progress/goal)*100 < 20
 								? "danger"
-								: (progress/goal)*100 < 50
-								? "warning"
 								: (progress/goal)*100 < 75
+								? "warning"
+								: (progress/goal)*100 <= 99
 								? "info"
 								: "success"
 						}
