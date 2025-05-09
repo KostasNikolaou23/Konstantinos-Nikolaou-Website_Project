@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import Dropdown from "react-bootstrap/Dropdown";
 
 import { getSearchResults } from "./API"; // Correct relative path
 
@@ -11,6 +13,8 @@ export function Header() {
 	const [searchOpen, setSearchOpen] = useState(false);
 	const [searchText, setSearchText] = useState(""); // State to store search input
 	const [searchResults, setSearchResults] = useState([]); // State to store search results
+
+	const searchContainerRef = useRef(null); // Ref for the search container
 
 	const toggleMenu = () => setMenuOpen(!menuOpen);
 	const toggleSearch = () => setSearchOpen(!searchOpen);
@@ -30,6 +34,23 @@ export function Header() {
 
 	const toggleAccount = () => setAccountOpen(!accountOpen);
 
+	// Close the search suggestions and dropdown when clicking outside
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (
+				searchContainerRef.current &&
+				!searchContainerRef.current.contains(event.target)
+			) {
+				setSearchOpen(false); // Close the search suggestions
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+
 	return (
 		<header className="header">
 			<link
@@ -37,9 +58,15 @@ export function Header() {
 				href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
 			/>
 
-			<Navbar sticky="top" expand="lg" className="bg-body-tertiary full-width-navbar">
+			<Navbar
+				sticky="top"
+				expand="lg"
+				className="bg-body-tertiary full-width-navbar"
+			>
 				<Container fluid>
-					<Navbar.Brand href="/"><h1>Movie Cave</h1></Navbar.Brand>
+					<Navbar.Brand href="/">
+						<h1>Movie Cave</h1>
+					</Navbar.Brand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav">
 						<Nav className="me-auto">
@@ -51,13 +78,19 @@ export function Header() {
 
 						<div className="right-container">
 							<div className={`account-container ${accountOpen ? "open" : ""}`}>
-								<button className="btn btn-primary account-toggle" onClick={toggleAccount}>
+								<button
+									className="btn btn-primary account-toggle"
+									onClick={toggleAccount}
+								>
 									<i className="fa fa-user"></i>
 								</button>
 
 								{accountOpen && (
 									<ul className="dropdown-menu show account-dropdown">
 										<li>
+											<a className="dropdown-item" href="/user/profile">
+												My Profile
+											</a>
 											<a className="dropdown-item" href="/user/mylist">
 												My List
 											</a>
@@ -93,8 +126,15 @@ export function Header() {
 								<i className="fa fa-gear"></i>
 							</button>
 
-							<div className={`search-container ${searchOpen ? "open" : ""}`}>
-								<button className="btn btn-primary search-toggle" onClick={toggleSearch}>
+							<div
+								className={`search-container ${searchOpen ? "open" : ""}`}
+								ref={searchContainerRef} // Attach the ref to the search container
+							>
+								<Col>
+								<button
+									className="btn btn-primary search-toggle"
+									onClick={toggleSearch}
+								>
 									<i className="fa fa-search"></i>
 								</button>
 
@@ -110,27 +150,33 @@ export function Header() {
 								)}
 
 								{searchResults.length > 0 && (
-									<ul className="dropdown-menu show search-dropdown">
-										{searchResults.map((result) => (
-											<li key={result.id} className="dropdown-item">
-												<a
-													href={`https://www.themoviedb.org/movie/${result.id}`}
-													target="_blank"
-													rel="noopener noreferrer"
-												>
-													{result.title}
-												</a>
-											</li>
-										))}
-									</ul>
+									<Dropdown show={searchOpen}>
+										<Dropdown.Menu className="search-dropdown">
+											{searchResults.map((result) => {
+												const title =
+													result.title.length > 35
+														? result.title.substring(0, 35) + "..."
+														: result.title;
+												return (
+													<Dropdown.Item
+														key={result.id}
+														href={`https://www.themoviedb.org/movie/${result.id}`}
+														target="_blank"
+														rel="noopener noreferrer"
+													>
+														{title}
+													</Dropdown.Item>
+												);
+											})}
+										</Dropdown.Menu>
+									</Dropdown>
 								)}
+								</Col>
 							</div>
 						</div>
-
 					</Navbar.Collapse>
 				</Container>
 			</Navbar>
-
 		</header>
 	);
 }

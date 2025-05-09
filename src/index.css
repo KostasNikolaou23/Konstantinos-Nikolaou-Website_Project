@@ -41,7 +41,7 @@ body {
   width: 100%;
   margin-bottom: 40px;
   padding-left: 1%;
-  padding-right: 1%;
+  padding-right: 2%;
   color: #1e1e1e;
 }
 
@@ -82,7 +82,7 @@ text-decoration: underline;
 .search-container {
   display: flex;
   align-items: center;
-  position: relative;
+  position: relative; /* Ensure the dropdown is positioned relative to this container */
   margin-left: auto; /* Push the search container to the right */
 }
 
@@ -267,16 +267,16 @@ background-color: #008fb0;
 }
 
 .search-dropdown {
-position: absolute;
-top: 100%;
-right: 0;
-z-index: 1050;
-background-color: white;
-border: 1px solid #ccc;
-border-radius: 4px;
-width: 100%;
-max-width: 300px;
-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 100%; /* Position the dropdown directly below the input */
+  left: 0; /* Align it with the left edge of the input */
+  z-index: 1050; /* Ensure it appears above other elements */
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%; /* Match the width of the input */
+  max-width: 300px; /* Optional: Limit the maximum width */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Align the account dropdown and search button to the right */
