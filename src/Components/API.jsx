@@ -106,53 +106,58 @@ async function getMovieDetails(movie_id) {
 
 // Images
 
-async function getImages(type, id, season_number = null, episode_number = null) {
-    let url = "";
-    switch (type) {
-        case "movie":
-            url = `https://api.themoviedb.org/3/movie/${id}/images`;
-            break;
-        case "tv":
-            url = `https://api.themoviedb.org/3/tv/${id}/images`;
-            break;
-        case "tvseason":
-            url = `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/images`;
-            break;
-        case "tvepisode":
-            url = `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/episode/${episode_number}/images`;
-            break;
-        default:
-            throw new Error(`Invalid type: ${type}`);
-    }
+async function getImages(
+	type,
+	id,
+	season_number = null,
+	episode_number = null
+) {
+	let url = "";
+	switch (type) {
+		case "movie":
+			url = `https://api.themoviedb.org/3/movie/${id}/images`;
+			break;
+		case "tv":
+			url = `https://api.themoviedb.org/3/tv/${id}/images`;
+			break;
+		case "tvseason":
+			url = `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/images`;
+			break;
+		case "tvepisode":
+			url = `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/episode/${episode_number}/images`;
+			break;
+		default:
+			throw new Error(`Invalid type: ${type}`);
+	}
 
-    const params = new URLSearchParams({
-        api_key: apiKey,
-    });
+	const params = new URLSearchParams({
+		api_key: apiKey,
+	});
 
-    try {
-        const response = await fetch(`${url}?${params.toString()}`, {
-            method: "GET",
-            headers: {
-                accept: "application/json",
-            },
-        });
+	try {
+		const response = await fetch(`${url}?${params.toString()}`, {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+			},
+		});
 
-        if (!response.ok) {
-            if (response.status === 404) {
-                console.warn(`Resource not found for ID: ${id}`);
-                return null; // Return null for 404 errors
-            }
-            const errorBody = await response.text();
-            console.error(`Error response body: ${errorBody}`);
-            throw new Error(`Error fetching images: ${response.statusText}`);
-        }
+		if (!response.ok) {
+			if (response.status === 404) {
+				console.warn(`Resource not found for ID: ${id}`);
+				return null; // Return null for 404 errors
+			}
+			const errorBody = await response.text();
+			console.error(`Error response body: ${errorBody}`);
+			throw new Error(`Error fetching images: ${response.statusText}`);
+		}
 
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("Error fetching images:", error);
-        throw error;
-    }
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error fetching images:", error);
+		throw error;
+	}
 }
 
 /**
@@ -168,39 +173,81 @@ async function getImages(type, id, season_number = null, episode_number = null) 
  * @returns {Promise<*>} - A promise resolving to the trending content data.
  */
 async function getTrendingContent(type = "movies", limit = 10) {
-    let url;
+	let url;
 
-    if (type === "movies") {
-        url = "https://api.themoviedb.org/3/trending/movie/week";
-    } else if (type === "tvseries") {
-        url = "https://api.themoviedb.org/3/trending/tv/day";
-    } else {
-        throw new Error("Invalid type. Use 'movies' or 'tvseries'.");
-    }
+	if (type === "movies") {
+		url = "https://api.themoviedb.org/3/trending/movie/week";
+	} else if (type === "tvseries") {
+		url = "https://api.themoviedb.org/3/trending/tv/day";
+	} else {
+		throw new Error("Invalid type. Use 'movies' or 'tvseries'.");
+	}
 
-    const params = new URLSearchParams({
-        api_key: apiKey, // Use your API key
-    });
+	const params = new URLSearchParams({
+		api_key: apiKey, // Use your API key
+	});
 
-    try {
-        const response = await fetch(`${url}?${params.toString()}`, {
-            method: "GET",
-            headers: {
-                accept: "application/json",
-                Authorization: `Bearer ${apiKey}`, // Add the Authorization header
-            },
-        });
+	try {
+		const response = await fetch(`${url}?${params.toString()}`, {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+				Authorization: `Bearer ${apiKey}`, // Add the Authorization header
+			},
+		});
 
-        if (!response.ok) {
-            throw new Error(`Error fetching trending content: ${response.statusText}`);
-        }
+		if (!response.ok) {
+			throw new Error(`Error fetching trending content: ${response.statusText}`);
+		}
 
-        const data = await response.json();
-        return data.results.slice(0, limit); // Limit the number of returned items
-    } catch (error) {
-        console.error("Error fetching trending content:", error);
-        throw error;
-    }
+		const data = await response.json();
+		return data.results.slice(0, limit); // Limit the number of returned items
+	} catch (error) {
+		console.error("Error fetching trending content:", error);
+		throw error;
+	}
+}
+
+/**
+ * Function to discover content (movies or TV series) based on genre and type
+ * @param {string} type - The type of content to fetch ('movies' or 'tvseries').
+ * @param {string} genre_ids - A comma-separated list of genre IDs to filter by.
+ * @param {number} limit - The maximum number of items to return (default is 10).
+ * @returns {Promise<*>} - A promise resolving to the discovered content data.
+ */
+async function discoverContent(type, genre_ids, limit = 10) {
+	let url;
+
+	if (type === "movies") {
+		url = `https://api.themoviedb.org/3/discover/movie?language=en-US&page=1&primary_release_year=2025&sort_by=popularity.desc&with_genres=${genre_ids}`;
+	} else if (type === "tvseries") {
+		url = `https://api.themoviedb.org/3/discover/tv?language=en-US&page=1&&primary_release_year=2025sort_by=popularity.desc&with_genres=${genre_ids}`;
+	} else {
+		throw new Error("Invalid type. Use 'movies' or 'tvseries'.");
+	}
+
+	const params = new URLSearchParams({
+		api_key: apiKey, // Use your API key
+	});
+
+	try {
+		const response = await fetch(`${url}&${params.toString()}`, {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+			},
+		});
+
+		if (!response.ok) {
+			throw new Error(`Error fetching discovered content: ${response.statusText}`);
+		}
+
+		const data = await response.json();
+		return data.results.slice(0, limit); // Limit the number of returned items
+	} catch (error) {
+		console.error("Error fetching discovered content:", error);
+		throw error;
+	}
 }
 
 module.exports = {
@@ -208,5 +255,6 @@ module.exports = {
 	getRecommendations,
 	getMovieDetails,
 	getImages,
-	getTrendingContent, // Updated export
+	getTrendingContent,
+	discoverContent,
 };

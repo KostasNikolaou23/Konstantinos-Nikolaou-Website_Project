@@ -11,6 +11,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Bootstrap JS
 import Home from './Pages/Home';
 import Movies from './Pages/Movies';
 import TVSeries from './Pages/TVSeries';
+import Kids from './Pages/Kids';
 
 // Account Functionality
 import Login from './Pages/User/Login';
@@ -40,6 +41,7 @@ function App() {
           {/* Content Pages */}
           <Route path="/movies" element={<Movies/>} />
           <Route path="/tvseries" element={<TVSeries/>} />
+          <Route path="/kids" element={<Kids/>} />
 
           <Route path="*" element={<div><center>404 Not Found</center></div>} />
         </Routes>
