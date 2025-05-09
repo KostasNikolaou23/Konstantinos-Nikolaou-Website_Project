@@ -40,12 +40,15 @@ body {
   align-items: center;
   width: 100%;
   margin-bottom: 40px;
+  padding-left: 1%;
+  padding-right: 1%;
   color: #1e1e1e;
 }
 
 .navbar {
   color: #1e1e1e;
 }
+
 
 .header h1 {
 font-size: 2.5rem;
