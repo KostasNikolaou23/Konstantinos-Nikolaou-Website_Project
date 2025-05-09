@@ -12,7 +12,6 @@ export function Footer() {
 					<div className="row">
 						<div className="col">
 							<p>© 2025-26 Movie Cave. All rights reserved.</p>
-							<p>Contact us on:</p>
 							<a
 								href="https://www.facebook.com"
 								target="_blank"
@@ -38,7 +37,7 @@ export function Footer() {
 						<div className="col">
 							<Form>
 								<Form.Group className="mb-3" controlId="formBasicEmail">
-									<Form.Label>Name</Form.Label>
+									<Form.Label>Contact us</Form.Label>
 									<Form.Control type="text" placeholder="Name" />
 									{/* <Form.Text className="text-muted">
 										We'll never share your email with anyone else.
