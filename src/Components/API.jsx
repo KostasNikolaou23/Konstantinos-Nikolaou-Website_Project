@@ -106,54 +106,53 @@ async function getMovieDetails(movie_id) {
 
 // Images
 
-async function getImages(
-	type,
-	id,
-	season_number = null,
-	episode_number = null
-) {
-	let url = "";
-	switch (type) {
-		case "movie":
-			url = `https://api.themoviedb.org/3/movie/${id}/images`;
-			break;
-		case "tv":
-			url = `https://api.themoviedb.org/3/tv/${id}/images`;
-			break;
-		case "tvseason":
-			url = `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/images`;
-			break;
-		case "tvepisode":
-			url = `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/episode/${episode_number}/images`;
-			break;
-		default:
-			throw new Error(`Invalid type: ${type}`);
-	}
+async function getImages(type, id, season_number = null, episode_number = null) {
+    let url = "";
+    switch (type) {
+        case "movie":
+            url = `https://api.themoviedb.org/3/movie/${id}/images`;
+            break;
+        case "tv":
+            url = `https://api.themoviedb.org/3/tv/${id}/images`;
+            break;
+        case "tvseason":
+            url = `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/images`;
+            break;
+        case "tvepisode":
+            url = `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/episode/${episode_number}/images`;
+            break;
+        default:
+            throw new Error(`Invalid type: ${type}`);
+    }
 
-	const params = new URLSearchParams({
-		api_key: apiKey,
-	});
+    const params = new URLSearchParams({
+        api_key: apiKey,
+    });
 
-	try {
-		const response = await fetch(`${url}?${params.toString()}`, {
-			method: "GET",
-			headers: {
-				accept: "application/json",
-			},
-		});
+    try {
+        const response = await fetch(`${url}?${params.toString()}`, {
+            method: "GET",
+            headers: {
+                accept: "application/json",
+            },
+        });
 
-		if (!response.ok) {
-			const errorBody = await response.text();
-			console.error(`Error response body: ${errorBody}`);
-			throw new Error(`Error fetching images: ${response.statusText}`);
-		}
+        if (!response.ok) {
+            if (response.status === 404) {
+                console.warn(`Resource not found for ID: ${id}`);
+                return null; // Return null for 404 errors
+            }
+            const errorBody = await response.text();
+            console.error(`Error response body: ${errorBody}`);
+            throw new Error(`Error fetching images: ${response.statusText}`);
+        }
 
-		const data = await response.json();
-		return data;
-	} catch (error) {
-		console.error("Error fetching images:", error);
-		throw error;
-	}
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching images:", error);
+        throw error;
+    }
 }
 
 /**
