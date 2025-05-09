@@ -3,10 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 
+import "bootstrap/dist/css/bootstrap.min.css"; //Bootstrap CSS
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Bootstrap JS
+
 // Pages
 // -----------------------------------------------------------
 import Home from './Pages/Home';
-
+import Movies from './Pages/Movies';
+import TVSeries from './Pages/TVSeries';
 
 // Account Functionality
 import Login from './Pages/User/Login';
@@ -15,8 +19,6 @@ import Track from './Pages/User/Track';
 import Achievements from './Pages/User/Achievements';
 import MyList from './Pages/User/MyList';
 import Profile from './Pages/User/Profile';
-import Movies from './Pages/Movies';
-import TVSeries from './Pages/TVSeries';
 
 function App() {
   return (
@@ -39,7 +41,7 @@ function App() {
           <Route path="/movies" element={<Movies/>} />
           <Route path="/tvseries" element={<TVSeries/>} />
 
-          <Route path="*" element={<div>404 Not Found</div>} />
+          <Route path="*" element={<div><center>404 Not Found</center></div>} />
         </Routes>
       </Router>
       <Footer />
