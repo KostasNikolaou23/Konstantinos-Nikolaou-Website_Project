@@ -20,11 +20,6 @@ const trackingData = [
 		added: "2023-01-01",
 	},
 	{
-		mvdbID: 12345,
-		type: "series",
-		added: "2023-01-01",
-	},
-	{
 		mvdbID: 13579,
 		type: "movie",
 		added: "2023-01-01",
