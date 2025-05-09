@@ -71,7 +71,7 @@ export function Header() {
 					<Navbar.Collapse id="basic-navbar-nav">
 						<Nav className="me-auto">
 							<Nav.Link href="/movies">Movies</Nav.Link>
-							<Nav.Link href="/series">TV Series</Nav.Link>
+							<Nav.Link href="/tvseries">TV Series</Nav.Link>
 							<Nav.Link href="/kids">Kid Shows</Nav.Link>
 							<Nav.Link href="/documentaries">Documentaries</Nav.Link>
 						</Nav>

@@ -15,6 +15,8 @@ import Track from './Pages/User/Track';
 import Achievements from './Pages/User/Achievements';
 import MyList from './Pages/User/MyList';
 import Profile from './Pages/User/Profile';
+import Movies from './Pages/Movies';
+import TVSeries from './Pages/TVSeries';
 
 function App() {
   return (
@@ -33,6 +35,9 @@ function App() {
           <Route path="/user/mylist" element={<MyList/>} />
           <Route path="/user/profile" element={<Profile/>} />
 
+          {/* Content Pages */}
+          <Route path="/movies" element={<Movies/>} />
+          <Route path="/tvseries" element={<TVSeries/>} />
 
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
