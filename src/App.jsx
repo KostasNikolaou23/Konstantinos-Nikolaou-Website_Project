@@ -14,7 +14,7 @@ import Register from './Pages/User/Register';
 import Track from './Pages/User/Track';
 import Achievements from './Pages/User/Achievements';
 import MyList from './Pages/User/MyList';
-
+import Profile from './Pages/User/Profile';
 
 function App() {
   return (
@@ -31,6 +31,8 @@ function App() {
           <Route path="/user/track" element={<Track/>} />
           <Route path="/user/achievements" element={<Achievements/>} />
           <Route path="/user/mylist" element={<MyList/>} />
+          <Route path="/user/profile" element={<Profile/>} />
+
 
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
