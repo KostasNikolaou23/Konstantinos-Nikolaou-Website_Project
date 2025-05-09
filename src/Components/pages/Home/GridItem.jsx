@@ -1,5 +1,3 @@
-import React from "react";
-
 export function GridItem({ cardName, cardDesc, cardImage, enableFavoriteButton, enableReviewButton }) {
   return (
     <div className="card">
@@ -26,8 +24,6 @@ export function GridItem({ cardName, cardDesc, cardImage, enableFavoriteButton, 
             </div>
           )}
         </div>
-
-        
 
       </div>
     </div>
