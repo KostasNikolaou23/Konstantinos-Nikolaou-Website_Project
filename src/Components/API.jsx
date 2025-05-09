@@ -160,32 +160,6 @@ async function getImages(type, id, season_number = null, episode_number = null) 
  * @param {number} limit - The maximum number of movies to return (default is 10).
  * @returns {Promise<*>} - A promise resolving to the trending movies data.
  */
-async function getTrendingMovies(limit = 10) {
-    const url = "https://api.themoviedb.org/3/trending/movie/week";
-    const params = new URLSearchParams({
-        api_key: apiKey, // Use your API key
-    });
-
-    try {
-        const response = await fetch(`${url}?${params.toString()}`, {
-            method: "GET",
-            headers: {
-                accept: "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error fetching trending movies: ${response.statusText}`);
-        }
-
-				console.log("Trending Movies Response: ", response); // Log the response for debugging
-        const data = await response.json();
-        return data.results.slice(0, limit); // Limit the number of returned items
-    } catch (error) {
-        console.error("Error fetching trending movies:", error);
-        throw error;
-    }
-}
 
 /**
  * Function to get trending content (movies or TV series)
