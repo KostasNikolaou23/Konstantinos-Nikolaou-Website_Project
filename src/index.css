@@ -24,13 +24,13 @@ body {
   flex: 1; /* Allow the container to grow and take up available space */
   width: 100%; /* Ensure it spans the full width */
   height: 100%; /* Ensure it spans the full height */
-  padding: 0; /* Remove any default padding */
   margin: auto; /* Remove any default margin */
+
+  padding-top: 10px;
+  padding-bottom: 10px;
   padding-left: 0px;
   padding-right: 0px;
-  margin-right: 0px;
-  margin-left: 0px;
-  padding-left: 0px;
+  
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
