@@ -1,29 +1,26 @@
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+// import UserAPI from "../../Components/pages/User/UserAPI";
+
 export function Login() {
 	return (
-	<div className="container">
-		<center>
-		<div className="card">
-			<h1>Login</h1>
+		<div className="container">
+			<Form>
+				<Form.Group className="mb-3" controlId="formUsername">
+					<Form.Label>Username</Form.Label>
+					<Form.Control type="text" placeholder="Enter username" />
+				</Form.Group>
 
-			<form>
-			<div className="form-group">
-				<label htmlFor="username">Username: </label>
-				<input type="text" id="username" name="username" required />
-			</div>
-			<div className="form-group">
-				<label htmlFor="password">Password: </label>
-				<input type="password" id="password" name="password" required />
-			</div>
+				<Form.Group className="mb-3" controlId="formPassword">
+					<Form.Label>Password</Form.Label>
+					<Form.Control type="password" placeholder="Password" />
+				</Form.Group>
 
-			<div className="spacer"></div>
-
-			<button type="submit">Login</button>
-			</form>
-
-			<p>Don't have an account? <a href="/user/register">Register here</a></p>
+				<Button variant="primary" type="submit">
+					Submit
+				</Button>
+			</Form>
 		</div>
-		</center>
-	</div>
 	);
 }
 

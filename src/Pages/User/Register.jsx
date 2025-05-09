@@ -1,34 +1,43 @@
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+
 export function Register() {
 	return (
-	<div className="container">
+		<div className="container">
+			<Form>
+				<Form.Group className="mb-3" controlId="formBasicEmail">
+					<Form.Label>Email address</Form.Label>
+					<Form.Control type="email" placeholder="Enter email" />
+					<Form.Text className="text-muted">
+						We'll never share your email with anyone else.
+					</Form.Text>
+				</Form.Group>
 
-		<center>
-		<div className="card">
-			<h1>Register</h1>
+				<Form.Group className="mb-3" controlId="formUsername">
+					<Form.Label>Username</Form.Label>
+					<Form.Control type="text" placeholder="Enter username" />
+				</Form.Group>
 
-			<form>
-			<div className="form-group">
-				<label htmlFor="username">Username: </label>
-				<input type="text" id="username" name="username" required />
-			</div>
-			<div className="form-group">
-				<label htmlFor="password">Password: </label>
-				<input type="password" id="password" name="password" required />
-			</div>
-			<div className="form-group">
-				<label htmlFor="password">Repeat Password: </label>
-				<input type="password" id="rep-password" name="password" required />
-			</div>
+				<Form.Group className="mb-3" controlId="formPassword">
+					<Form.Label>Password</Form.Label>
+					<Form.Control type="password" placeholder="Password" />
+				</Form.Group>
 
-			<div className="spacer"></div>
+				<Form.Group className="mb-3" controlId="formRepeatPassword">
+					<Form.Label>Repeat Password</Form.Label>
+					<Form.Control type="password" placeholder="Password" />
+				</Form.Group>
 
-			<button type="submit">Register</button>
-			</form>
+				<Form.Group className="mb-3" controlId="formBasicCheckbox">
+					<Form.Check type="checkbox" label="I agree with the terms of service" />
+				</Form.Group>
 
-			<p>Gave an account? <a href="/user/login">Login here</a></p>
+				<Button variant="primary" type="submit">
+					Submit
+				</Button>
+
+			</Form>
 		</div>
-		</center>
-	</div>
 	);
 }
 
