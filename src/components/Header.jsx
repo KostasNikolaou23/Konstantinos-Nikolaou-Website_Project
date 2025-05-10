@@ -74,6 +74,7 @@ export function Header() {
 							<Nav.Link href="/tvseries">TV Series</Nav.Link>
 							<Nav.Link href="/kids">Kids</Nav.Link>
 							<Nav.Link href="/documentaries">Documentaries</Nav.Link>
+							<Nav.Link href="/leaderboard">Leaderboard</Nav.Link>
 						</Nav>
 
 						<div className="right-container">
