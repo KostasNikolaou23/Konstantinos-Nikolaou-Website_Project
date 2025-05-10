@@ -12,6 +12,7 @@ import Home from './Pages/Home';
 import Movies from './Pages/Movies';
 import TVSeries from './Pages/TVSeries';
 import Kids from './Pages/Kids';
+import Documentaries from './Pages/Documentaries';
 
 // Account Functionality
 import Login from './Pages/User/Login';
@@ -42,6 +43,7 @@ function App() {
           <Route path="/movies" element={<Movies/>} />
           <Route path="/tvseries" element={<TVSeries/>} />
           <Route path="/kids" element={<Kids/>} />
+          <Route path="/documentaries" element={<Documentaries/>} />
 
           <Route path="*" element={<div><center>404 Not Found</center></div>} />
         </Routes>
