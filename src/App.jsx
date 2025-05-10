@@ -9,6 +9,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js"; // Bootstrap JS
 // Pages
 // -----------------------------------------------------------
 import Home from './Pages/Home';
+import Leaderboard from './Pages/Leaderboard';
+
 import Movies from './Pages/Movies';
 import TVSeries from './Pages/TVSeries';
 import Kids from './Pages/Kids';
@@ -30,6 +32,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home/>} />
           <Route path="/settings" element={<div>Settings</div>} />
+          <Route path="/leaderboard" element={<Leaderboard/>} />
 
           {/* Account Functionality */}
           <Route path="/user/login" element={<Login/>} />
