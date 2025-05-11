@@ -4,16 +4,96 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Start Server",
+			"label": "Install All Dependencies",
 			"type": "shell",
-			"command": "npm start",
+			"command": "npm install",
+			"args": [],
+			"options": {
+				"cwd": "${workspaceFolder}/client"
+			},
 			"group": "none",
 			"problemMatcher": []
 		},
 		{
-			"label": "Install All Dependencies",
+			"label": "Install Server Dependencies",
 			"type": "shell",
 			"command": "npm install",
+			"args": [],
+			"options": {
+				"cwd": "${workspaceFolder}/server"
+			},
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "Install Client Dependencies",
+			"type": "shell",
+			"command": "npm install",
+			"args": [],
+			"options": {
+				"cwd": "${workspaceFolder}/client"
+			},
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "Start Client",
+			"type": "shell",
+			"command": "npm start",
+			"options": {
+				"cwd": "${workspaceFolder}/client"
+			},
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Start Server",
+			"type": "shell",
+			"command": "npm start",
+			"options": {
+				"cwd": "${workspaceFolder}/server"
+			},
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Start Both Services",
+			"type": "shell",
+			"command": "concurrently",
+			"args": [
+				"\"npm start --prefix client\"",
+				"\"npm start --prefix server\""
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Delete Root Node Modules",
+			"type": "shell",
+			"command": "rimraf",
+			"args": [
+				"${workspaceFolder}/node_modules"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "Delete Client Node Modules",
+			"type": "shell",
+			"command": "rimraf",
+			"args": [
+				"${workspaceFolder}/client/node_modules"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "Delete Server Node Modules",
+			"type": "shell",
+			"command": "rimraf",
+			"args": [
+				"${workspaceFolder}/server/node_modules"
+			],
 			"group": "none",
 			"problemMatcher": []
 		}
