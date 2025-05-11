@@ -1,4 +1,5 @@
 import Table from "react-bootstrap/Table";
+// import { getSearchResults } from "../Components/UserAPI";
 
 // Criteria: Users with most achievements is at the top
 
@@ -16,6 +17,19 @@ const leaderboard_test = {
 		achievements: "600",
 	},
 };
+
+// Fetch user trophies/achievements
+// app.get("/api/user/:id/trophies", (req, res) => {
+//   const userId = req.params.id;
+
+//   const sql = "SELECT achievements FROM users WHERE id = ?";
+//   db.query(sql, [userId], (err, results) => {
+//     if (err) return res.status(500).json({ error: err.message });
+//     if (results.length === 0) return res.status(404).json({ message: "User not found!" });
+
+//     res.status(200).json({ achievements: results[0].achievements });
+//   });
+// });
 
 export function Leaderboard() {
 	return (

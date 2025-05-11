@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { discoverContent } from "../API"; // Import the discoverContent function
-import GridItem from "../pages/Home/GridItem";
+import GridItem from "./Home/GridItem";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
