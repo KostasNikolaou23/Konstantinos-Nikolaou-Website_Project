@@ -61,6 +61,7 @@
 			"type": "shell",
 			"command": "concurrently",
 			"args": [
+				"-n", "client,server",
 				"\"npm start --prefix client\"",
 				"\"npm start --prefix server\""
 			],
