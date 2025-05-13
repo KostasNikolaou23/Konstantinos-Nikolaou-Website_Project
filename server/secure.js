@@ -7,6 +7,15 @@ function generateRandomHash(length = 128) {
     return result;
 }
 
+function getCurrentUnixTime() {
+    return Math.floor(Date.now() / 1000);
+}
+
+function getCurrentDate() {
+    const date = new Date();
+    return date.toISOString().split("T")[0];
+}
+
 function getUnixSessionLifetime(time=3600) {
     const date = new Date();
     date.setSeconds(date.getSeconds() + time);
@@ -17,4 +26,6 @@ function getUnixSessionLifetime(time=3600) {
 module.exports = {
     generateRandomHash,
     getUnixSessionLifetime,
+    getCurrentUnixTime,
+    getCurrentDate,
 };

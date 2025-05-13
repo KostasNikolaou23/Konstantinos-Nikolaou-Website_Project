@@ -27,6 +27,110 @@ app.get("/api/data", async (req, res) => {
 	}
 });
 
+// MyList APIs
+// ----------------------------------
+// Get movies JSON for userID
+app.get("/api/mylist/movies/:userID", async (req, res) => {
+    const userID = req.params.userID;
+
+    // Validate input
+    if (!userID) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
+
+    try {
+        // Select only the 'movies' column for the given userID
+        const [rows] = await db.query("SELECT movies FROM mylist WHERE userID = ?", [
+            userID,
+        ]);
+
+        // If no rows are found, return a 404 response
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "No movies found for this user" });
+        }
+
+        // Return the 'movies' column
+        res.json({ movies: rows[0].movies });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get tvseries JSON for userID
+app.get("/api/mylist/tvseries/:userID", async (req, res) => {
+    const userID = req.params.userID;
+
+    // Validate input
+    if (!userID) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
+
+    try {
+        // Select only the 'tvseries' column for the given userID
+        const [rows] = await db.query("SELECT tvseries FROM mylist WHERE userID = ?", [
+            userID,
+        ]);
+
+        // If no rows are found, return a 404 response
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "No tvseries found for this user" });
+        }
+
+        // Return the 'tvseries' column
+        res.json({ tvseries: rows[0].tvseries });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Add movie to mylist
+app.post("/api/mylist/movies", async (req, res) => {
+    const { userID, movieID } = req.body;
+
+    // Validate input
+    if (!userID || !movieID) {
+        return res.status(400).json({ message: "User ID and Movie ID are required" });
+    }
+
+    try {
+        // Get the current date in YYYY-MM-DD format
+        const addedDate = secure.getCurrentDate();
+
+        // Create the new movie object to append
+        const newMovie = JSON.stringify({ mvdbID: movieID, added: addedDate });
+
+        // Update the 'movies' column by appending the new movie object
+        await db.query(
+            "UPDATE mylist SET movies = JSON_ARRAY_APPEND(movies, '$', CAST(? AS JSON)) WHERE userID = ?",
+            [newMovie, userID]
+        );
+
+        res.status(201).json({ message: "Movie added to mylist" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Add tvseries to mylist
+app.post("/api/mylist/tvseries", async (req, res) => {
+	const { userID, tvseriesID } = req.body;
+
+	// Validate input
+	if (!userID || !tvseriesID) {
+		return res.status(400).json({ message: "User ID and TV Series ID are required" });
+	}
+
+	try {
+		await db.query(
+			"UPDATE mylist SET tvseries = JSON_ARRAY_APPEND(tvseries, '$', ?) WHERE userID = ?",
+			[tvseriesID, userID]
+		);
+		res.status(201).json({ message: "TV Series added to mylist" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 // User APIs
 // ----------------------------------
 // Register
@@ -109,7 +213,7 @@ app.get("/api/user/checksession", async (req, res) => {
 			// Session exists
 
 			// Time check
-			const currentTime = Math.floor(Date.now() / 1000);
+			const currentTime = secure.getCurrentUnixTime();
 			const session = rows[0];
 			if (session.until < currentTime) {
 				// Session has expired
@@ -124,9 +228,6 @@ app.get("/api/user/checksession", async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 });
-
-
-
 
 // Έναρξη του server
 app.listen(PORT, () => {
