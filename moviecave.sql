@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 10, 2025 at 05:15 PM
+-- Generation Time: May 13, 2025 at 06:23 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -67,6 +67,18 @@ INSERT INTO `mylist` (`userid`, `movies`, `tvseries`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `sessions`
+--
+
+CREATE TABLE `sessions` (
+  `identifier` char(128) NOT NULL,
+  `until` int(10) UNSIGNED NOT NULL,
+  `userID` int(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `track`
 --
 
@@ -111,7 +123,7 @@ INSERT INTO `users` (`userid`, `email`, `username`, `password`) VALUES
 (2, 'user2@example.com', 'user2', 'password456'),
 (3, 'user3@example.com', 'user3', 'password789'),
 (4, 'user4@example.com', 'user4', 'password101'),
-(5, 'user5@example.com', 'user5', 'password202');
+(5, 'user5@example.com', 'user5', 'password202'),
 
 --
 -- Indexes for dumped tables
@@ -128,6 +140,13 @@ ALTER TABLE `achievements`
 --
 ALTER TABLE `mylist`
   ADD KEY `userid` (`userid`);
+
+--
+-- Indexes for table `sessions`
+--
+ALTER TABLE `sessions`
+  ADD PRIMARY KEY (`identifier`),
+  ADD KEY `userID` (`userID`);
 
 --
 -- Indexes for table `users`
@@ -149,7 +168,7 @@ ALTER TABLE `achievements`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userid` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `userid` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -160,6 +179,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `mylist`
   ADD CONSTRAINT `mylist_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`);
+
+--
+-- Constraints for table `sessions`
+--
+ALTER TABLE `sessions`
+  ADD CONSTRAINT `sessions_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`userid`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
