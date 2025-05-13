@@ -4,12 +4,12 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Install All Dependencies",
+			"label": "Install Root Dependencies (concurrent)",
 			"type": "shell",
 			"command": "npm install",
 			"args": [],
 			"options": {
-				"cwd": "${workspaceFolder}/client"
+				"cwd": "${workspaceFolder}"
 			},
 			"group": "none",
 			"problemMatcher": []
