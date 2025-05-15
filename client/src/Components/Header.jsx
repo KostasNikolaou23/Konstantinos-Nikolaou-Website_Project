@@ -33,8 +33,30 @@ export function Header() {
 
 	const [accountOpen, setAccountOpen] = useState(false);
 	const [username, setUsername] = useState("Username"); // Default username
+	const [darkMode, setDarkMode] = useState(() => {
+		// Initialize dark mode from cookie
+		return document.cookie
+			.split("; ")
+			.find((row) => row.startsWith("darkMode="))
+			?.split("=")[1] === "true";
+	});
 
 	const toggleAccount = () => setAccountOpen(!accountOpen);
+
+	const toggleDarkMode = () => {
+		const newMode = !darkMode;
+		setDarkMode(newMode);
+
+		// Update the cookie
+		document.cookie = `darkMode=${newMode}; path=/; max-age=31536000`; // 1 year expiration
+
+		// Update the body class
+		if (newMode) {
+			document.body.classList.add("dark-mode");
+		} else {
+			document.body.classList.remove("dark-mode");
+		}
+	};
 
 	useEffect(() => {
 		async function fetchSession() {
@@ -55,7 +77,14 @@ export function Header() {
 		}
 
 		fetchSession();
-	}, []);
+
+		// Apply the initial dark mode class
+		if (darkMode) {
+			document.body.classList.add("dark-mode");
+		} else {
+			document.body.classList.remove("dark-mode");
+		}
+	}, [darkMode]);
 
 	// Close the search suggestions and dropdown when clicking outside
 	useEffect(() => {
@@ -161,6 +190,13 @@ export function Header() {
 
 							<button className="btn btn-primary account-toggle" href="/settings">
 								<i className="fa fa-gear"></i>
+							</button>
+
+							<button
+								className="btn btn-secondary theme-toggle"
+								onClick={toggleDarkMode}
+							>
+								{darkMode ? "Light Mode" : "Dark Mode"}
 							</button>
 
 							<div

@@ -29,29 +29,31 @@ function App() {
     <>
       <Header />
       <Router>
-        <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/settings" element={<div>Settings</div>} />
-          <Route path="/leaderboard" element={<Leaderboard/>} />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/settings" element={<div>Settings</div>} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
 
-          {/* Account Functionality */}
-          <Route path="/user/login" element={<Login/>} />
-          <Route path="/user/register" element={<Register/>} />
-          <Route path="/user/track" element={<Track/>} />
-          <Route path="/user/achievements" element={<Achievements/>} />
-          <Route path="/user/mylist" element={<MyList/>} />
-          <Route path="/user/profile" element={<Profile user_edit={true}/>} />
-          <Route path="/user/logout" element={<div>Logout</div>} />
-          <Route path="/user/view/:username" element={<Profile user_edit={false}/>} />
+            {/* Account Functionality */}
+            <Route path="/user/login" element={<Login />} />
+            <Route path="/user/register" element={<Register />} />
+            <Route path="/user/track" element={<Track />} />
+            <Route path="/user/achievements" element={<Achievements />} />
+            <Route path="/user/mylist" element={<MyList />} />
+            <Route path="/user/profile" element={<Profile user_edit={true} />} />
+            <Route path="/user/logout" element={<div>Logout</div>} />
+            <Route path="/user/view/:username" element={<Profile user_edit={false} />} />
 
-          {/* Content Pages */}
-          <Route path="/movies" element={<Movies/>} />
-          <Route path="/tvseries" element={<TVSeries/>} />
-          <Route path="/kids" element={<Kids/>} />
-          <Route path="/documentaries" element={<Documentaries/>} />
+            {/* Content Pages */}
+            <Route path="/movies" element={<Movies />} />
+            <Route path="/tvseries" element={<TVSeries />} />
+            <Route path="/kids" element={<Kids />} />
+            <Route path="/documentaries" element={<Documentaries />} />
 
-          <Route path="*" element={<div><center>404 Not Found</center></div>} />
-        </Routes>
+            <Route path="*" element={<div><center>404 Not Found</center></div>} />
+          </Routes>
+        </main>
       </Router>
       <Footer />
     </>
