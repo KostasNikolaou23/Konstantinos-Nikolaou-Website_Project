@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 5000; // Διαφορετικό port από το 3000 της React
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(cookieParser()); // Add this line to parse cookies
 
@@ -179,7 +179,7 @@ app.post("/api/user/login", async (req, res) => {
 			);
 
 			// Set the session cookie
-			res.cookie("session", sessionId, { httpOnly: true, secure: true });
+			res.cookie("session", sessionId, { httpOnly: true, secure: false });
 			res.status(200).json({ message: "Login successful" });
 		} else {
 			res.status(401).json({ message: "Invalid credentials" });
