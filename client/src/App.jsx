@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 
 import Header from './Components/Header';
 import Footer from './Components/Footer';
@@ -40,7 +40,9 @@ function App() {
           <Route path="/user/track" element={<Track/>} />
           <Route path="/user/achievements" element={<Achievements/>} />
           <Route path="/user/mylist" element={<MyList/>} />
-          <Route path="/user/profile" element={<Profile/>} />
+          <Route path="/user/profile" element={<Profile user_edit={true}/>} />
+          <Route path="/user/logout" element={<div>Logout</div>} />
+          <Route path="/user/view/:username" element={<Profile user_edit={false}/>} />
 
           {/* Content Pages */}
           <Route path="/movies" element={<Movies/>} />

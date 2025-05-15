@@ -226,6 +226,52 @@ app.get("/api/user/checksession", async (req, res) => {
 	}
 });
 
+// Get UserID and Username from session
+app.get("/api/user/getsession", async (req, res) => {
+    const sessionId = req.cookies.session;
+
+    if (!sessionId) {
+        return res.status(401).json({ message: "No session found" });
+    }
+
+    try {
+        const [rows] = await db.query(
+            "SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
+            [sessionId]
+        );
+
+        if (rows.length === 0) {
+            return res.status(401).json({ message: "Session does not exist" });
+        }
+
+        res.json(rows[0]); // Return userid and username
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get user data
+app.get("/api/user/get/:username", async (req, res) => {
+	const username = req.params.username;
+
+	// Validate input
+	if (!username) {
+		return res.status(400).json({ message: "Username is required" });
+	}
+
+	try {
+		const [rows] = await db.query("SELECT joined, userid FROM users WHERE username = ?", [username]);
+
+		if (rows.length === 0) {
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		res.json(rows[0]);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 // Achievements API
 // ----------------------------------
 // Get achievements of user
@@ -300,6 +346,26 @@ app.post("/api/user/achievements/top", async (req, res) => {
 	}
 });
 
+// Logout route
+app.post("/api/user/logout", async (req, res) => {
+    const sessionId = req.cookies.session;
+
+    if (!sessionId) {
+        return res.status(400).json({ message: "No session found" });
+    }
+
+    try {
+        // Delete the session from the database
+        await db.query("DELETE FROM sessions WHERE identifier = ?", [sessionId]);
+
+        // Clear the session cookie
+        res.clearCookie("session", { httpOnly: true, secure: false });
+
+        res.status(200).json({ message: "Logout successful" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // Έναρξη του server
 app.listen(PORT, () => {

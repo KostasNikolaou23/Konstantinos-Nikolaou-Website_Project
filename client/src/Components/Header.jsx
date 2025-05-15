@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Navbar from "react-bootstrap/Navbar";
 import Dropdown from "react-bootstrap/Dropdown";
+import { getSession, logout } from "../Components/UserAPI"; // Import getSession
 
 import { getSearchResults } from "./API"; // Correct relative path
 
@@ -31,8 +32,30 @@ export function Header() {
 	};
 
 	const [accountOpen, setAccountOpen] = useState(false);
+	const [username, setUsername] = useState("Username"); // Default username
 
 	const toggleAccount = () => setAccountOpen(!accountOpen);
+
+	useEffect(() => {
+		async function fetchSession() {
+			try {
+				console.log("Fetching session...");
+				const session = await getSession(); // Fetch session details
+				console.log("Session fetched:", session);
+
+				if (session.username) {
+					setUsername(session.username); // Update username if session is valid
+					console.log("Username set to:", session.username);
+				} else {
+					console.log("No valid session found");
+				}
+			} catch (error) {
+				console.error("Error fetching session:", error);
+			}
+		}
+
+		fetchSession();
+	}, []);
 
 	// Close the search suggestions and dropdown when clicking outside
 	useEffect(() => {
@@ -50,6 +73,8 @@ export function Header() {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, []);
+
+	const isLoggedIn = !!username; // Check if the user is logged in
 
 	return (
 		<header className="header">
@@ -84,6 +109,7 @@ export function Header() {
 									onClick={toggleAccount}
 								>
 									<i className="fa fa-user"></i>
+									&nbsp; {username || "Guest"}
 								</button>
 
 								{accountOpen && (
@@ -109,16 +135,26 @@ export function Header() {
 										<li>
 											<hr className="dropdown-divider" />
 										</li>
-										<li>
-											<a className="dropdown-item" href="/user/login">
-												Login
-											</a>
-										</li>
-										<li>
-											<a className="dropdown-item" href="/user/register">
-												Register
-											</a>
-										</li>
+										{isLoggedIn ? (
+											<li>
+												<a className="dropdown-item" href="#" onClick={logout}>
+													Logout
+												</a>
+											</li>
+										) : (
+											<>
+												<li>
+													<a className="dropdown-item" href="/user/login">
+														Login
+													</a>
+												</li>
+												<li>
+													<a className="dropdown-item" href="/user/register">
+														Register
+													</a>
+												</li>
+											</>
+										)}
 									</ul>
 								)}
 							</div>
@@ -132,46 +168,46 @@ export function Header() {
 								ref={searchContainerRef} // Attach the ref to the search container
 							>
 								<Col>
-								<button
-									className="btn btn-primary search-toggle"
-									onClick={toggleSearch}
-								>
-									<i className="fa fa-search"></i>
-								</button>
+									<button
+										className="btn btn-primary search-toggle"
+										onClick={toggleSearch}
+									>
+										<i className="fa fa-search"></i>
+									</button>
 
-								{searchOpen && (
-									<input
-										type="text"
-										placeholder="Search..."
-										className="search-input"
-										value={searchText}
-										onChange={(e) => setSearchText(e.target.value)} // Update state on input change
-										onKeyDown={handleSearchKeyDown} // Trigger search on Enter key press
-									/>
-								)}
+									{searchOpen && (
+										<input
+											type="text"
+											placeholder="Search..."
+											className="search-input"
+											value={searchText}
+											onChange={(e) => setSearchText(e.target.value)} // Update state on input change
+											onKeyDown={handleSearchKeyDown} // Trigger search on Enter key press
+										/>
+									)}
 
-								{searchResults.length > 0 && (
-									<Dropdown show={searchOpen}>
-										<Dropdown.Menu className="search-dropdown">
-											{searchResults.map((result) => {
-												const title =
-													result.title.length > 35
-														? result.title.substring(0, 35) + "..."
-														: result.title;
-												return (
-													<Dropdown.Item
-														key={result.id}
-														href={`https://www.themoviedb.org/movie/${result.id}`}
-														target="_blank"
-														rel="noopener noreferrer"
-													>
-														{title}
-													</Dropdown.Item>
-												);
-											})}
-										</Dropdown.Menu>
-									</Dropdown>
-								)}
+									{searchResults.length > 0 && (
+										<Dropdown show={searchOpen}>
+											<Dropdown.Menu className="search-dropdown">
+												{searchResults.map((result) => {
+													const title =
+														result.title.length > 35
+															? result.title.substring(0, 35) + "..."
+															: result.title;
+													return (
+														<Dropdown.Item
+															key={result.id}
+															href={`https://www.themoviedb.org/movie/${result.id}`}
+															target="_blank"
+															rel="noopener noreferrer"
+														>
+															{title}
+														</Dropdown.Item>
+													);
+												})}
+											</Dropdown.Menu>
+										</Dropdown>
+									)}
 								</Col>
 							</div>
 						</div>
