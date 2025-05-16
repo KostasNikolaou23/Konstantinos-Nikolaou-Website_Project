@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 16 Μάη 2025 στις 18:12:28
+-- Χρόνος δημιουργίας: 16 Μάη 2025 στις 19:44:30
 -- Έκδοση διακομιστή: 10.4.24-MariaDB
 -- Έκδοση PHP: 7.4.29
 
@@ -50,6 +50,25 @@ INSERT INTO `achievements` (`id`, `name`, `description`, `goal`) VALUES
 (9, 'Adrenaline Rush', 'Watch 40 action movies!', 40),
 (10, 'Wannabe detective', 'Watch 20 crime movies/series!', 20),
 (11, 'The King', 'Reach 10 achievements', 10);
+
+-- --------------------------------------------------------
+
+--
+-- Δομή πίνακα για τον πίνακα `badges`
+--
+
+CREATE TABLE `badges` (
+  `id` int(11) NOT NULL,
+  `name` text NOT NULL,
+  `description` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Άδειασμα δεδομένων του πίνακα `badges`
+--
+
+INSERT INTO `badges` (`id`, `name`, `description`) VALUES
+(1, 'King of the hill', 'Reached 10 achievements');
 
 -- --------------------------------------------------------
 
@@ -202,10 +221,16 @@ INSERT INTO `user_achievements` (`user_id`, `achievement_id`) VALUES
 --
 
 CREATE TABLE `user_badges` (
-  `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `badge` varchar(255) NOT NULL
+  `badge_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Άδειασμα δεδομένων του πίνακα `user_badges`
+--
+
+INSERT INTO `user_badges` (`user_id`, `badge_id`) VALUES
+(1, 1);
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
@@ -215,6 +240,12 @@ CREATE TABLE `user_badges` (
 -- Ευρετήρια για πίνακα `achievements`
 --
 ALTER TABLE `achievements`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Ευρετήρια για πίνακα `badges`
+--
+ALTER TABLE `badges`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -247,7 +278,8 @@ ALTER TABLE `user_achievements`
 -- Ευρετήρια για πίνακα `user_badges`
 --
 ALTER TABLE `user_badges`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`user_id`,`badge_id`),
+  ADD KEY `fk_user_badges_badge_id` (`badge_id`);
 
 --
 -- AUTO_INCREMENT για άχρηστους πίνακες
@@ -260,16 +292,16 @@ ALTER TABLE `achievements`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
+-- AUTO_INCREMENT για πίνακα `badges`
+--
+ALTER TABLE `badges`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT για πίνακα `users`
 --
 ALTER TABLE `users`
   MODIFY `userid` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT για πίνακα `user_badges`
---
-ALTER TABLE `user_badges`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Περιορισμοί για άχρηστους πίνακες
@@ -293,6 +325,13 @@ ALTER TABLE `sessions`
 ALTER TABLE `user_achievements`
   ADD CONSTRAINT `user_achievements_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE,
   ADD CONSTRAINT `user_achievements_ibfk_2` FOREIGN KEY (`achievement_id`) REFERENCES `achievements` (`id`) ON DELETE CASCADE;
+
+--
+-- Περιορισμοί για πίνακα `user_badges`
+--
+ALTER TABLE `user_badges`
+  ADD CONSTRAINT `fk_user_badges_badge_id` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_user_badges_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
