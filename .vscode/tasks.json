@@ -57,7 +57,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Start Both Services",
+			"label": "(BORKED) Start Both Services",
 			"type": "shell",
 			"command": "concurrently",
 			"args": [
