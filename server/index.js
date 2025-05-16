@@ -250,6 +250,46 @@ app.get("/api/user/getsession", async (req, res) => {
     }
 });
 
+// Get current logged-in user's profile
+app.get("/api/user/me", async (req, res) => {
+    const sessionId = req.cookies.session;
+    if (!sessionId) {
+        return res.status(401).json({ message: "No session found" });
+    }
+
+    try {
+        // Get user info from session
+        const [sessionRows] = await db.query(
+            "SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
+            [sessionId]
+        );
+        if (sessionRows.length === 0) {
+            return res.status(401).json({ message: "Session does not exist" });
+        }
+        const user = sessionRows[0];
+
+        // Get badges for the user
+        const [badgesRows] = await db.query(
+            "SELECT badge FROM user_badges WHERE user_id = ?",
+            [user.userid]
+        );
+
+        // Get achievements for the user
+        const [achievementsRows] = await db.query(
+            "SELECT achievement_id FROM user_achievements WHERE user_id = ?",
+            [user.userid]
+        );
+
+        res.json({
+            username: user.username,
+            badges: badgesRows.map(b => b.badge),
+            achievements: achievementsRows.map(a => a.achievement_id)
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Get user data
 app.get("/api/user/get/:username", async (req, res) => {
 	const username = req.params.username;
