@@ -42,7 +42,13 @@ export default function Profile({ view_profile = false }) {
                         src={defaultPicture}
                         alt="Profile"
                         className="profile-pic"
-                        style={{ maxWidth: "150px", maxHeight: "150px", borderRadius: "50%" }}
+                        style={{
+                            maxWidth: "150px",
+                            maxHeight: "150px",
+                            borderRadius: "50%",
+                            border: "3px solid #000", // Black outline
+                            boxShadow: "0 0 8px rgba(0,0,0,0.10)" // Optional subtle shadow
+                        }}
                     />
                     <h2 style={{ marginTop: "1rem", textAlign: "center" }}>
                         {userData ? userData.username : "Loading..."}
