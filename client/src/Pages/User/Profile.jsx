@@ -55,8 +55,29 @@ export default function Profile({ view_profile = false }) {
                             <div style={{ marginBottom: "1rem" }}>
                                 {userData && userData.badges && userData.badges.length > 0 ? (
                                     userData.badges.map((badge, idx) => (
-                                        <Badge key={idx} bg="info" pill style={{ marginRight: "8px" }}>
+                                        <Badge
+                                            key={idx}
+                                            pill
+                                            style={{
+                                                marginRight: "8px",
+                                                backgroundColor: badge === "King of the hill" ? "#FFD700" : "#0dcaf0",
+                                                color: badge === "King of the hill" ? "#232946" : "#fff",
+                                                fontWeight: badge === "King of the hill" ? "bold" : undefined,
+                                                display: "inline-flex",
+                                                alignItems: "center"
+                                            }}
+                                        >
                                             {badge}
+                                            {/* Show crown icon for all badges, or only for specific ones if you want */}
+                                            <i
+                                                className="fa-solid fa-crown"
+                                                style={{
+                                                    color: "#FFD43B",
+                                                    marginLeft: "6px",
+                                                    fontSize: "1em",
+                                                    verticalAlign: "middle"
+                                                }}
+                                            ></i>
                                         </Badge>
                                     ))
                                 ) : (
