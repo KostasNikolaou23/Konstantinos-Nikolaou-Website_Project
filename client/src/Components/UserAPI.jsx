@@ -72,6 +72,22 @@ export async function logout() {
 	}
 }
 
+// Fetch current user's profile data
+export async function fetchUserProfile() {
+	console.log("Fetching user profile...");
+    try {
+        const response = await fetch("http://localhost:5000/api/user/me", {
+            credentials: "include",
+        });
+        if (!response.ok) throw new Error("Failed to fetch profile");
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        console.error("Error fetching user profile:", err);
+        throw err;
+    }
+}
+
 // MyList
 // -----------------------------------------------------
 export async function addMyList(mvdbID, type) {

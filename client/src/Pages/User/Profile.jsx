@@ -1,30 +1,38 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Badge from "react-bootstrap/Badge";
 import Card from "react-bootstrap/Card";
 import defaultPicture from "../../Components/pages/User/Profile/default-user.jpg";
+import { fetchUserProfile } from "../../Components/UserAPI";
 
-export default function MyProfile() {
+export default function Profile({ view_profile = false }) {
     const [userData, setUserData] = useState(null);
     const [error, setError] = useState(null);
+    const { username } = useParams();
 
     useEffect(() => {
-        async function fetchProfile() {
+        async function loadProfile() {
             try {
-                const response = await fetch("http://localhost:5000/api/user/me", {
-                    credentials: "include",
-                });
-                if (!response.ok) throw new Error("Failed to fetch profile");
-                const data = await response.json();
+                let data;
+                if (view_profile) {
+                    // Fetch current user's profile
+                    data = await fetchUserProfile();
+                } else if (username) {
+                    // Fetch another user's profile (implement this endpoint in your backend)
+                    const response = await fetch(`http://localhost:5000/api/user/profile/${username}`);
+                    if (!response.ok) throw new Error("Failed to fetch user profile");
+                    data = await response.json();
+                }
                 setUserData(data);
             } catch (err) {
                 setError(err.message);
             }
         }
-        fetchProfile();
-    }, []);
+        loadProfile();
+    }, [view_profile, username]);
 
     return (
         <Container style={{ marginTop: "2rem" }}>
@@ -57,10 +65,10 @@ export default function MyProfile() {
                             </div>
                             <Card.Title>My Achievements</Card.Title>
                             <ul>
-                                {userData && userData.achievements && userData.achievements.length > 0 ? (
-                                    userData.achievements.map((ach, idx) => (
-                                        <li key={idx}>{ach}</li>
-                                    ))
+                                {userData &&
+                                userData.achievements &&
+                                userData.achievements.length > 0 ? (
+                                    userData.achievements.map((ach, idx) => <li key={idx}>{ach}</li>)
                                 ) : (
                                     <li>No achievements yet.</li>
                                 )}

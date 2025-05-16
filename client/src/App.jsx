@@ -47,7 +47,7 @@ function App() {
 						<Route path="/user/track" element={<Track />} />
 						<Route path="/user/achievements" element={<Achievements />} />
 						<Route path="/user/mylist" element={<MyList />} />
-						<Route path="/user/profile" element={<Profile user_edit={true} />} />
+						<Route path="/user/profile" element={<Profile view_profile={true} />} />
 						<Route path="/user/logout" element={<div>Logout</div>} />
 						<Route
 							path="/user/view/:username"
