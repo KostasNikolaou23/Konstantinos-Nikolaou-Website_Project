@@ -381,7 +381,10 @@ app.get("/api/user/me", async (req, res) => {
         const user = sessionRows[0];
 
         const [badgesRows] = await db.query(
-            "SELECT badge FROM user_badges WHERE user_id = ?",
+            `SELECT b.name 
+             FROM user_badges ub 
+             JOIN badges b ON ub.badge_id = b.id 
+             WHERE ub.user_id = ?`,
             [user.userid]
         );
 
@@ -392,7 +395,7 @@ app.get("/api/user/me", async (req, res) => {
 
         res.json({
             username: user.username,
-            badges: badgesRows.map((b) => b.badge),
+            badges: badgesRows.map((b) => b.name),
             achievements: achievementsRows.map((a) => a.achievement_id),
         });
     } catch (error) {
