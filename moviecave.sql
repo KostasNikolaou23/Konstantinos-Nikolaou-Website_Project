@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 13, 2025 at 06:23 PM
+-- Generation Time: May 16, 2025 at 03:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -111,19 +111,43 @@ CREATE TABLE `users` (
   `userid` int(30) NOT NULL,
   `email` text NOT NULL,
   `username` text NOT NULL,
-  `password` text NOT NULL
+  `password` text NOT NULL,
+  `joined` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`userid`, `email`, `username`, `password`) VALUES
-(1, 'user1@example.com', 'user1', 'password123'),
-(2, 'user2@example.com', 'user2', 'password456'),
-(3, 'user3@example.com', 'user3', 'password789'),
-(4, 'user4@example.com', 'user4', 'password101'),
-(5, 'user5@example.com', 'user5', 'password202'),
+INSERT INTO `users` (`userid`, `email`, `username`, `password`, `joined`) VALUES
+(1, 'user1@example.com', 'user1', 'password123', '2025-05-13'),
+(2, 'user2@example.com', 'user2', 'password456', NULL),
+(3, 'user3@example.com', 'user3', 'password789', NULL),
+(4, 'user4@example.com', 'user4', 'password101', NULL),
+(5, 'user5@example.com', 'user5', 'password202', NULL),
+(6, 'test@user.com', 'jez115', '115tpass', '2025-05-01');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_achievements`
+--
+
+CREATE TABLE `user_achievements` (
+  `user_id` int(30) NOT NULL,
+  `achievement_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_achievements`
+--
+
+INSERT INTO `user_achievements` (`user_id`, `achievement_id`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(2, 1);
 
 --
 -- Indexes for dumped tables
@@ -153,6 +177,13 @@ ALTER TABLE `sessions`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`userid`);
+
+--
+-- Indexes for table `user_achievements`
+--
+ALTER TABLE `user_achievements`
+  ADD PRIMARY KEY (`user_id`,`achievement_id`),
+  ADD KEY `achievement_id` (`achievement_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -185,6 +216,13 @@ ALTER TABLE `mylist`
 --
 ALTER TABLE `sessions`
   ADD CONSTRAINT `sessions_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`userid`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `user_achievements`
+--
+ALTER TABLE `user_achievements`
+  ADD CONSTRAINT `user_achievements_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE,
+  ADD CONSTRAINT `user_achievements_ibfk_2` FOREIGN KEY (`achievement_id`) REFERENCES `achievements` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
