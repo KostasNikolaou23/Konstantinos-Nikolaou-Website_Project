@@ -165,11 +165,6 @@ function Header() {
 													</a>
 												</li>
 												<li>
-													<a className="dropdown-item" href="/user/achievements">
-														Achievements
-													</a>
-												</li>
-												<li>
 													<a className="dropdown-item" href="/user/track">
 														Track Progress
 													</a>
