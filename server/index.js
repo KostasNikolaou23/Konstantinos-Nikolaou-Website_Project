@@ -389,14 +389,17 @@ app.get("/api/user/me", async (req, res) => {
         );
 
         const [achievementsRows] = await db.query(
-            "SELECT achievement_id FROM user_achievements WHERE user_id = ?",
+            `SELECT a.name
+             FROM user_achievements ua
+             JOIN achievements a ON ua.achievement_id = a.id
+             WHERE ua.user_id = ?`,
             [user.userid]
         );
 
         res.json({
             username: user.username,
             badges: badgesRows.map((b) => b.name),
-            achievements: achievementsRows.map((a) => a.achievement_id),
+            achievements: achievementsRows.map((a) => a.name),
         });
     } catch (error) {
         console.error("Error in /api/user/me:", error);
