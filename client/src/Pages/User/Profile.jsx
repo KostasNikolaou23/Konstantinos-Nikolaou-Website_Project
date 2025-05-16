@@ -61,7 +61,7 @@ export default function Profile({ view_profile = false }) {
                                             style={{
                                                 marginRight: "8px",
                                                 backgroundColor: badge === "King of the hill" ? "#FFD700" : "#0dcaf0",
-                                                color: badge === "King of the hill" ? "#232946" : "#fff",
+                                                color: badge === "King of the hill" ? "#D6AF00FF" : "#fff",
                                                 fontWeight: badge === "King of the hill" ? "bold" : undefined,
                                                 display: "inline-flex",
                                                 alignItems: "center"
