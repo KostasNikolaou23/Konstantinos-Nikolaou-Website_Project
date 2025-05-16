@@ -7,6 +7,7 @@ import Navbar from "react-bootstrap/Navbar";
 import Dropdown from "react-bootstrap/Dropdown";
 import { getSession, logout } from "../Components/UserAPI"; // Import getSession
 import { getSearchResults } from "./API"; // Correct relative path
+import { useNavigate } from "react-router-dom";
 
 function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -15,6 +16,7 @@ function Header() {
 	const [searchResults, setSearchResults] = useState([]); // State to store search results
 
 	const searchContainerRef = useRef(null); // Ref for the search container
+	const navigate = useNavigate();
 
 	const toggleMenu = () => setMenuOpen(!menuOpen);
 	const toggleSearch = () => setSearchOpen(!searchOpen);
@@ -234,17 +236,26 @@ function Header() {
 											<Dropdown.Menu className="search-dropdown">
 												{searchResults.map((result) => {
 													const title =
-														result.title.length > 35
-															? result.title.substring(0, 35) + "..."
-															: result.title;
+														(result.title || result.name || "").length > 35
+															? (result.title || result.name).substring(0, 30) + "..."
+															: result.title || result.name;
+													// Determine type and id
+													const type = result.media_type === "tv" ? "tvseries" : "movie";
+													const id = result.id;
 													return (
 														<Dropdown.Item
-															key={result.id}
-															href={`https://www.themoviedb.org/movie/${result.id}`}
-															target="_blank"
-															rel="noopener noreferrer"
+															key={result.id + result.media_type}
+															onClick={() => {
+																setSearchOpen(false);
+																navigate(`/${type}/${id}`);
+															}}
 														>
 															{title}
+															<span
+																style={{ marginLeft: 8, color: "#888", fontSize: "0.9em" }}
+															>
+																{type === "movie" ? "🎬" : "📺"}
+															</span>
 														</Dropdown.Item>
 													);
 												})}
