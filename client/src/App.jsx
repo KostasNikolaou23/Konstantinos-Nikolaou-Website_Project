@@ -26,7 +26,6 @@ import ContentPreview from "./Pages/ContentPreview";
 import Login from "./Pages/User/Login";
 import Register from "./Pages/User/Register";
 import Track from "./Pages/User/Track";
-import Achievements from "./Pages/User/Achievements";
 import MyList from "./Pages/User/MyList";
 import Profile from "./Pages/User/Profile";
 
@@ -45,7 +44,6 @@ function App() {
 						<Route path="/user/login" element={<Login />} />
 						<Route path="/user/register" element={<Register />} />
 						<Route path="/user/track" element={<Track />} />
-						<Route path="/user/achievements" element={<Achievements />} />
 						<Route path="/user/mylist" element={<MyList />} />
 						<Route path="/user/profile" element={<Profile view_profile={true} />} />
 						<Route path="/user/logout" element={<div>Logout</div>} />
