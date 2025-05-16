@@ -62,7 +62,7 @@ CREATE TABLE `mylist` (
 --
 
 INSERT INTO `mylist` (`userid`, `movies`, `tvseries`) VALUES
-(1, '[\r\n        {\"mvdbID\": \"931349-ash\", \"type\": \"movie\", \"added\": \"2023-01-01\"},\r\n        {\"mvdbID\": 54321, \"type\": \"movie\", \"added\": \"2023-01-01\"},\r\n        {\"mvdbID\": 13579, \"type\": \"movie\", \"added\": \"2023-01-01\"}\r\n    ]', '[\r\n        {\"mvdbID\": 67890, \"type\": \"series\", \"status\": \"To Watch\", \"added\": \"2023-01-01\"}\r\n    ]');
+(1, '[\r\n        {\"mvdbID\": \"931349-ash\", \"status\": \"watched\", \"added\": \"2023-01-01\"},\r\n        {\"mvdbID\": 54321, \"status\": \"watching\", \"added\": \"2023-01-01\"},\r\n        {\"mvdbID\": 13579, \"status\": \"to_watch\", \"added\": \"2023-01-01\"}\r\n    ]', '[\r\n        {\"mvdbID\": 67890, \"status\": \"to_watch\", \"added\": \"2023-01-01\"}\r\n    ]');
 
 -- --------------------------------------------------------
 
