@@ -31,81 +31,82 @@ app.get("/api/data", async (req, res) => {
 // ----------------------------------
 // Get movies JSON for userID
 app.get("/api/mylist/movies/:userID", async (req, res) => {
-    const userID = req.params.userID;
+	const userID = req.params.userID;
 
-    // Validate input
-    if (!userID) {
-        return res.status(400).json({ message: "User ID is required" });
-    }
+	// Validate input
+	if (!userID) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
 
-    try {
-        // Select only the 'movies' column for the given userID
-        const [rows] = await db.query("SELECT movies FROM mylist WHERE userID = ?", [
-            userID,
-        ]);
+	try {
+		// Select only the 'movies' column for the given userID
+		const [rows] = await db.query("SELECT movies FROM mylist WHERE userID = ?", [
+			userID,
+		]);
 
-        // If no rows are found, return a 404 response
-        if (rows.length === 0) {
-            return res.status(404).json({ message: "No movies found for this user" });
-        }
+		// If no rows are found, return a 404 response
+		if (rows.length === 0) {
+			return res.status(404).json({ message: "No movies found for this user" });
+		}
 
-        // Return the 'movies' column
-        res.json({ movies: rows[0].movies });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		// Return the 'movies' column
+		res.json({ movies: rows[0].movies });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Get tvseries JSON for userID
 app.get("/api/mylist/tvseries/:userID", async (req, res) => {
-    const userID = req.params.userID;
+	const userID = req.params.userID;
 
-    // Validate input
-    if (!userID) {
-        return res.status(400).json({ message: "User ID is required" });
-    }
+	// Validate input
+	if (!userID) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
 
-    try {
-        // Select only the 'tvseries' column for the given userID
-        const [rows] = await db.query("SELECT tvseries FROM mylist WHERE userID = ?", [
-            userID,
-        ]);
+	try {
+		// Select only the 'tvseries' column for the given userID
+		const [rows] = await db.query(
+			"SELECT tvseries FROM mylist WHERE userID = ?",
+			[userID]
+		);
 
-        // If no rows are found, return a 404 response
-        if (rows.length === 0) {
-            return res.status(404).json({ message: "No tvseries found for this user" });
-        }
+		// If no rows are found, return a 404 response
+		if (rows.length === 0) {
+			return res.status(404).json({ message: "No tvseries found for this user" });
+		}
 
-        // Return the 'tvseries' column
-        res.json({ tvseries: rows[0].tvseries });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		// Return the 'tvseries' column
+		res.json({ tvseries: rows[0].tvseries });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Add movie to mylist
 app.post("/api/mylist/movies", async (req, res) => {
-    const { userID, movieID } = req.body;
+	const { userID, movieID } = req.body;
 
-    // Validate input
-    if (!userID || !movieID) {
-        return res.status(400).json({ message: "User ID and Movie ID are required" });
-    }
+	// Validate input
+	if (!userID || !movieID) {
+		return res.status(400).json({ message: "User ID and Movie ID are required" });
+	}
 
-    try {
-        const addedDate = secure.getCurrentDate(); // Get the current date in YYYY-MM-DD format
-        const newMovie = JSON.stringify({ mvdbID: movieID, added: addedDate }); // Create the new movie object to append
+	try {
+		const addedDate = secure.getCurrentDate(); // Get the current date in YYYY-MM-DD format
+		const newMovie = JSON.stringify({ mvdbID: movieID, added: addedDate }); // Create the new movie object to append
 
-        // Update the 'movies' column by appending the new movie object
-        await db.query(
-            "UPDATE mylist SET movies = JSON_ARRAY_APPEND(movies, '$', CAST(? AS JSON)) WHERE userID = ?",
-            [newMovie, userID]
-        );
+		// Update the 'movies' column by appending the new movie object
+		await db.query(
+			"UPDATE mylist SET movies = JSON_ARRAY_APPEND(movies, '$', CAST(? AS JSON)) WHERE userID = ?",
+			[newMovie, userID]
+		);
 
-        res.status(201).json({ message: "Movie added to mylist" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		res.status(201).json({ message: "Movie added to mylist" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Add tvseries to mylist
@@ -114,7 +115,9 @@ app.post("/api/mylist/tvseries", async (req, res) => {
 
 	// Validate input
 	if (!userID || !tvseriesID) {
-		return res.status(400).json({ message: "User ID and TV Series ID are required" });
+		return res
+			.status(400)
+			.json({ message: "User ID and TV Series ID are required" });
 	}
 
 	try {
@@ -123,6 +126,115 @@ app.post("/api/mylist/tvseries", async (req, res) => {
 			[tvseriesID, userID]
 		);
 		res.status(201).json({ message: "TV Series added to mylist" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/mylist/remove", async (req, res) => {
+	const { userID, mvdbID, type } = req.body;
+	if (!userID || !mvdbID || !type) {
+		return res
+			.status(400)
+			.json({ message: "userID, mvdbID, and type are required" });
+	}
+	try {
+		const [rows] = await db.query(
+			`SELECT ${
+				type === "movie" ? "movies" : "tvseries"
+			} FROM mylist WHERE userID = ?`,
+			[userID]
+		);
+		if (rows.length === 0) return res.status(404).json({ message: "Not found" });
+		let arr = [];
+		try {
+			arr = JSON.parse(rows[0][type === "movie" ? "movies" : "tvseries"]);
+		} catch {
+			arr = [];
+		}
+		const newArr = arr.filter((item) => String(item.mvdbID) !== String(mvdbID));
+		await db.query(
+			`UPDATE mylist SET ${
+				type === "movie" ? "movies" : "tvseries"
+			} = ? WHERE userID = ?`,
+			[JSON.stringify(newArr), userID]
+		);
+		res.status(200).json({ message: "Removed from MyList" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/mylist/add", async (req, res) => {
+	const { userID, mvdbID, type } = req.body;
+	if (!userID || !mvdbID || !type) {
+		return res
+			.status(400)
+			.json({ message: "userID, mvdbID, and type are required" });
+	}
+	try {
+		// Get current list
+		const [rows] = await db.query(
+			`SELECT ${
+				type === "movie" ? "movies" : "tvseries"
+			} FROM mylist WHERE userID = ?`,
+			[userID]
+		);
+		let arr = [];
+		if (rows.length > 0) {
+			try {
+				arr = JSON.parse(rows[0][type === "movie" ? "movies" : "tvseries"]);
+			} catch {
+				arr = [];
+			}
+		}
+		// Prevent duplicates
+		if (arr.some((item) => String(item.mvdbID) === String(mvdbID))) {
+			return res.status(409).json({ message: "Already in MyList" });
+		}
+		// Add new item
+		const addedDate = secure.getCurrentDate();
+		arr.push({
+			mvdbID,
+			status: "to_watch",
+			added: addedDate,
+			watched_status: 0,
+		});
+		await db.query(
+			`UPDATE mylist SET ${
+				type === "movie" ? "movies" : "tvseries"
+			} = ? WHERE userID = ?`,
+			[JSON.stringify(arr), userID]
+		);
+		res.status(201).json({ message: "Added to MyList" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/mylist/check", async (req, res) => {
+	const { userID, mvdbID, type } = req.body;
+	if (!userID || !mvdbID || !type) {
+		return res
+			.status(400)
+			.json({ message: "userID, mvdbID, and type are required" });
+	}
+	try {
+		const [rows] = await db.query(
+			`SELECT ${
+				type === "movie" ? "movies" : "tvseries"
+			} FROM mylist WHERE userID = ?`,
+			[userID]
+		);
+		if (rows.length === 0) return res.json({ exists: false });
+		let arr = [];
+		try {
+			arr = JSON.parse(rows[0][type === "movie" ? "movies" : "tvseries"]);
+		} catch {
+			arr = [];
+		}
+		const exists = arr.some((item) => String(item.mvdbID) === String(mvdbID));
+		res.json({ exists });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -228,66 +340,66 @@ app.get("/api/user/checksession", async (req, res) => {
 
 // Get UserID and Username from session
 app.get("/api/user/getsession", async (req, res) => {
-    const sessionId = req.cookies.session;
+	const sessionId = req.cookies.session;
 
-    if (!sessionId) {
-        return res.status(401).json({ message: "No session found" });
-    }
+	if (!sessionId) {
+		return res.status(401).json({ message: "No session found" });
+	}
 
-    try {
-        const [rows] = await db.query(
-            "SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
-            [sessionId]
-        );
+	try {
+		const [rows] = await db.query(
+			"SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
+			[sessionId]
+		);
 
-        if (rows.length === 0) {
-            return res.status(401).json({ message: "Session does not exist" });
-        }
+		if (rows.length === 0) {
+			return res.status(401).json({ message: "Session does not exist" });
+		}
 
-        res.json(rows[0]); // Return userid and username
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		res.json(rows[0]); // Return userid and username
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Get current logged-in user's profile
 app.get("/api/user/me", async (req, res) => {
-    const sessionId = req.cookies.session;
-    if (!sessionId) {
-        return res.status(401).json({ message: "No session found" });
-    }
+	const sessionId = req.cookies.session;
+	if (!sessionId) {
+		return res.status(401).json({ message: "No session found" });
+	}
 
-    try {
-        // Get user info from session
-        const [sessionRows] = await db.query(
-            "SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
-            [sessionId]
-        );
-        if (sessionRows.length === 0) {
-            return res.status(401).json({ message: "Session does not exist" });
-        }
-        const user = sessionRows[0];
+	try {
+		// Get user info from session
+		const [sessionRows] = await db.query(
+			"SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
+			[sessionId]
+		);
+		if (sessionRows.length === 0) {
+			return res.status(401).json({ message: "Session does not exist" });
+		}
+		const user = sessionRows[0];
 
-        // Get badges for the user
-        const [badgesRows] = await db.query(
-            "SELECT badge FROM user_badges WHERE user_id = ?",
-            [user.userid]
-        );
+		// Get badges for the user
+		const [badgesRows] = await db.query(
+			"SELECT badge FROM user_badges WHERE user_id = ?",
+			[user.userid]
+		);
 
-        // Get achievements for the user
-        const [achievementsRows] = await db.query(
-            "SELECT achievement_id FROM user_achievements WHERE user_id = ?",
-            [user.userid]
-        );
+		// Get achievements for the user
+		const [achievementsRows] = await db.query(
+			"SELECT achievement_id FROM user_achievements WHERE user_id = ?",
+			[user.userid]
+		);
 
-        res.json({
-            username: user.username,
-            badges: badgesRows.map(b => b.badge),
-            achievements: achievementsRows.map(a => a.achievement_id)
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		res.json({
+			username: user.username,
+			badges: badgesRows.map((b) => b.badge),
+			achievements: achievementsRows.map((a) => a.achievement_id),
+		});
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Get user data
@@ -300,7 +412,10 @@ app.get("/api/user/get/:username", async (req, res) => {
 	}
 
 	try {
-		const [rows] = await db.query("SELECT joined, userid FROM users WHERE username = ?", [username]);
+		const [rows] = await db.query(
+			"SELECT joined, userid FROM users WHERE username = ?",
+			[username]
+		);
 
 		if (rows.length === 0) {
 			return res.status(404).json({ message: "User not found" });
@@ -324,12 +439,15 @@ app.get("/api/achievements/get/:userID", async (req, res) => {
 	}
 
 	try {
-		const [rows] = await db.query("SELECT achievement_id FROM user_achievements WHERE user_id = ?", [
-			userID,
-		]);
+		const [rows] = await db.query(
+			"SELECT achievement_id FROM user_achievements WHERE user_id = ?",
+			[userID]
+		);
 
 		if (rows.length === 0) {
-			return res.status(404).json({ message: "No achievements found for this user" });
+			return res
+				.status(404)
+				.json({ message: "No achievements found for this user" });
 		}
 
 		res.json(rows);
@@ -344,7 +462,9 @@ app.post("/api/achievements/set", async (req, res) => {
 
 	// Validate input
 	if (!userID || !achievementID) {
-		return res.status(400).json({ message: "User ID and Achievement ID are required" });
+		return res
+			.status(400)
+			.json({ message: "User ID and Achievement ID are required" });
 	}
 
 	try {
@@ -388,23 +508,23 @@ app.post("/api/user/achievements/top", async (req, res) => {
 
 // Logout route
 app.post("/api/user/logout", async (req, res) => {
-    const sessionId = req.cookies.session;
+	const sessionId = req.cookies.session;
 
-    if (!sessionId) {
-        return res.status(400).json({ message: "No session found" });
-    }
+	if (!sessionId) {
+		return res.status(400).json({ message: "No session found" });
+	}
 
-    try {
-        // Delete the session from the database
-        await db.query("DELETE FROM sessions WHERE identifier = ?", [sessionId]);
+	try {
+		// Delete the session from the database
+		await db.query("DELETE FROM sessions WHERE identifier = ?", [sessionId]);
 
-        // Clear the session cookie
-        res.clearCookie("session", { httpOnly: true, secure: false });
+		// Clear the session cookie
+		res.clearCookie("session", { httpOnly: true, secure: false });
 
-        res.status(200).json({ message: "Logout successful" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		res.status(200).json({ message: "Logout successful" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Έναρξη του server

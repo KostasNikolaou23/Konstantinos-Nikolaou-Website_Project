@@ -6,13 +6,15 @@ import Badge from "react-bootstrap/Badge";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { getMovieDetails, getTVDetails } from "../Components/API";
-import { addMyList } from "../Components/UserAPI";
+import { addMyList, removeFromMyList, isInMyList } from "../Components/UserAPI";
 
 function ContentPreview({ type = "movie" }) {
     const { id } = useParams();
     const mvdb_id = id;
 
     const [details, setDetails] = useState(null);
+    const [inMyList, setInMyList] = useState(false);
+    const [loadingMyList, setLoadingMyList] = useState(true);
 
     useEffect(() => {
         async function fetchDetails() {
@@ -31,6 +33,28 @@ function ContentPreview({ type = "movie" }) {
         }
         fetchDetails();
     }, [mvdb_id, type]);
+
+    useEffect(() => {
+        async function checkList() {
+            setLoadingMyList(true);
+            const exists = await isInMyList(mvdb_id, type);
+            setInMyList(exists);
+            setLoadingMyList(false);
+        }
+        if (mvdb_id) {
+            checkList();
+        }
+    }, [mvdb_id, type]);
+
+    const handleMyListClick = async () => {
+        if (inMyList) {
+            await removeFromMyList(mvdb_id, type);
+            setInMyList(false);
+        } else {
+            await addMyList(mvdb_id, type);
+            setInMyList(true);
+        }
+    };
 
     if (!details) {
         return <div>Loading...</div>;
@@ -90,11 +114,13 @@ function ContentPreview({ type = "movie" }) {
                     </Col>
                     <Col xs="auto">
                         <Button
-                            variant="danger"
+                            variant={inMyList ? "outline-danger" : "danger"}
                             size="lg"
-                            onClick={() => addMyList(mvdb_id, type)}
+                            onClick={handleMyListClick}
+                            disabled={loadingMyList}
                         >
-                            <i className="fa fa-heart"></i>
+                            <i className={inMyList ? "fa fa-heart-broken" : "fa fa-heart"}></i>
+                            {inMyList ? " Remove from MyList" : " Add to MyList"}
                         </Button>
                     </Col>
                 </Row>
