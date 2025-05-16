@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
+import "./Leaderboard.css";
 
 export function Leaderboard() {
     const [leaderboard, setLeaderboard] = useState([]);
@@ -31,7 +32,7 @@ export function Leaderboard() {
         <div className="container">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
             {error && <p style={{ color: "red" }}>Error: {error}</p>}
-            <Table striped bordered hover size="sm" responsive="sm">
+            <Table striped bordered hover size="sm" responsive="sm" className="leaderboard-table">
                 <thead>
                     <tr>
                         <th>#</th>
