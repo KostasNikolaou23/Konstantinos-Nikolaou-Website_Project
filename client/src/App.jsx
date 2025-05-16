@@ -15,6 +15,7 @@ import Movies from './Pages/Movies';
 import TVSeries from './Pages/TVSeries';
 import Kids from './Pages/Kids';
 import Documentaries from './Pages/Documentaries';
+import ContentPreview from './Pages/ContentPreview';
 
 // Account Functionality
 import Login from './Pages/User/Login';
@@ -27,8 +28,8 @@ import Profile from './Pages/User/Profile';
 function App() {
   return (
     <>
-      <Header />
       <Router>
+        <Header />
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -50,12 +51,14 @@ function App() {
             <Route path="/tvseries" element={<TVSeries />} />
             <Route path="/kids" element={<Kids />} />
             <Route path="/documentaries" element={<Documentaries />} />
+            <Route path="/movie/:id" element={<ContentPreview type="movie" />} />
+            <Route path="/tvseries/:id" element={<ContentPreview type="tvseries" />} />
 
             <Route path="*" element={<div><center>404 Not Found</center></div>} />
           </Routes>
         </main>
+        <Footer />
       </Router>
-      <Footer />
     </>
   );
 }
