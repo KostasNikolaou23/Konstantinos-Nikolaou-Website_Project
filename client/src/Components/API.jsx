@@ -24,38 +24,27 @@ fetch(url, options)
  * @param {number} startPage - The starting page for results (default is 1).
  * @param {boolean} includeAdult - Whether to include adult content (default is false).
  * @param {string} language - The language of the results (e.g., "en-US").
- * @param {string} primaryReleaseYear - Filter results by the primary release year.
- * @param {string} region - Specify a region for the results (e.g., "US").
- * @param {string} year - Filter results by the year.
  * @returns {Promise<*>} - A promise resolving to the search results.
  */
 async function getSearchResults(
 	searchTerm,
 	startPage = 1,
 	includeAdult = false,
-	language = "en-US",
-	primaryReleaseYear = "",
-	region = "",
-	year = ""
+	language = "en-US"
 ) {
-	const url = "https://api.themoviedb.org/3/search/movie";
+	const url = "https://api.themoviedb.org/3/search/multi";
 	const params = new URLSearchParams({
 		query: searchTerm,
 		page: startPage,
 		include_adult: includeAdult,
 		language,
-		primary_release_year: primaryReleaseYear,
-		region,
-		year,
-		api_key: apiKey, // Use your API key
+		api_key: apiKey,
 	});
 
 	try {
 		const response = await fetch(`${url}?${params.toString()}`, {
 			method: "GET",
-			headers: {
-				accept: "application/json",
-			},
+			headers: { accept: "application/json" },
 		});
 
 		if (!response.ok) {
@@ -63,7 +52,10 @@ async function getSearchResults(
 		}
 
 		const data = await response.json();
-		return data.results;
+		// Only return movies and tv series
+		return data.results.filter(
+			(item) => item.media_type === "movie" || item.media_type === "tv"
+		);
 	} catch (error) {
 		console.error("Error fetching search results:", error);
 		throw error;
