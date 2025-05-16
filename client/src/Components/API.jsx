@@ -53,6 +53,7 @@ async function getSearchResults(
 
 		const data = await response.json();
 		// Only return movies and tv series
+		console.log(data);
 		return data.results.filter(
 			(item) => item.media_type === "movie" || item.media_type === "tv"
 		);
@@ -92,6 +93,33 @@ async function getMovieDetails(movie_id) {
 		return data; // Return the full movie details object
 	} catch (error) {
 		console.error("Error fetching movie details:", error);
+		throw error;
+	}
+}
+
+async function getTVDetails(tv_id) {
+	const url = `https://api.themoviedb.org/3/tv/${tv_id}`;
+	const params = new URLSearchParams({
+		api_key: apiKey,
+	});
+
+	try {
+		const response = await fetch(`${url}?${params.toString()}`, {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+			},
+		});
+
+		if (!response.ok) {
+			throw new Error(`Error fetching TV details: ${response.statusText}`);
+		}
+
+		const data = await response.json();
+		console.log(data); // Log the full response to verify the structure
+		return data; // Return the full TV details object
+	} catch (error) {
+		console.error("Error fetching TV details:", error);
 		throw error;
 	}
 }
@@ -246,6 +274,7 @@ module.exports = {
 	getSearchResults,
 	getRecommendations,
 	getMovieDetails,
+	getTVDetails,
 	getImages,
 	getTrendingContent,
 	discoverContent,
