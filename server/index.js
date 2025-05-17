@@ -532,6 +532,53 @@ app.post("/api/user/logout", async (req, res) => {
 	}
 });
 
+// Rating
+// ----------------------------------
+
+app.post("/api/setRating", async (req, res) => {
+    const { userID, mvdbID, type, rating } = req.body;
+    if (!userID || !mvdbID || !type || !rating) {
+        return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Validate session (optional: you can also check req.cookies.session)
+    // Save or update the rating in your database
+    try {
+        // Example: upsert into a ratings table
+        await db.query(
+            `INSERT INTO ratings (user_id, mvdb_id, type, rating)
+             VALUES (?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE rating = ?`,
+            [userID, mvdbID, type, rating, rating]
+        );
+        res.status(200).json({ message: "Rating saved" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get rating
+app.get("/api/getRating/:userID/:mvdbID/:type", async (req, res) => {
+		const { userID, mvdbID, type } = req.params;
+		if (!userID || !mvdbID || !type) {
+				return res.status(400).json({ message: "Missing required fields" });
+		}
+
+		try {
+				const [rows] = await db.query(
+						`SELECT rating FROM ratings WHERE user_id = ? AND mvdb_id = ? AND type = ?`,
+						[userID, mvdbID, type]
+				);
+				if (rows.length > 0) {
+						res.status(200).json({ rating: rows[0].rating });
+				} else {
+						res.status(404).json({ message: "Rating not found" });
+				}
+		} catch (error) {
+				res.status(500).json({ error: error.message });
+		}
+});
+
 // Έναρξη του server
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);

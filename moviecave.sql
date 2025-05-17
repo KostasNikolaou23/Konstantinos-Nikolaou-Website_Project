@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Εξυπηρετητής: 127.0.0.1
--- Χρόνος δημιουργίας: 16 Μάη 2025 στις 19:44:30
--- Έκδοση διακομιστή: 10.4.24-MariaDB
--- Έκδοση PHP: 7.4.29
+-- Host: 127.0.0.1
+-- Generation Time: May 17, 2025 at 01:33 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Βάση δεδομένων: `moviecave`
+-- Database: `moviecave`
 --
 
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `achievements`
+-- Table structure for table `achievements`
 --
 
 CREATE TABLE `achievements` (
@@ -32,10 +32,10 @@ CREATE TABLE `achievements` (
   `name` text NOT NULL,
   `description` text NOT NULL,
   `goal` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Άδειασμα δεδομένων του πίνακα `achievements`
+-- Dumping data for table `achievements`
 --
 
 INSERT INTO `achievements` (`id`, `name`, `description`, `goal`) VALUES
@@ -54,17 +54,17 @@ INSERT INTO `achievements` (`id`, `name`, `description`, `goal`) VALUES
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `badges`
+-- Table structure for table `badges`
 --
 
 CREATE TABLE `badges` (
   `id` int(11) NOT NULL,
   `name` text NOT NULL,
   `description` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Άδειασμα δεδομένων του πίνακα `badges`
+-- Dumping data for table `badges`
 --
 
 INSERT INTO `badges` (`id`, `name`, `description`) VALUES
@@ -73,17 +73,17 @@ INSERT INTO `badges` (`id`, `name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `mylist`
+-- Table structure for table `mylist`
 --
 
 CREATE TABLE `mylist` (
   `userid` int(11) DEFAULT NULL,
   `movies` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`movies`)),
   `tvseries` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`tvseries`))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Άδειασμα δεδομένων του πίνακα `mylist`
+-- Dumping data for table `mylist`
 --
 
 INSERT INTO `mylist` (`userid`, `movies`, `tvseries`) VALUES
@@ -92,26 +92,48 @@ INSERT INTO `mylist` (`userid`, `movies`, `tvseries`) VALUES
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `sessions`
+-- Table structure for table `ratings`
+--
+
+CREATE TABLE `ratings` (
+  `user_id` int(30) NOT NULL,
+  `type` enum('movie','tvseries') NOT NULL,
+  `mvdb_id` varchar(32) NOT NULL,
+  `rating` tinyint(3) UNSIGNED NOT NULL CHECK (`rating` between 1 and 5)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ratings`
+--
+
+INSERT INTO `ratings` (`user_id`, `type`, `mvdb_id`, `rating`) VALUES
+(1, 'movie', '245891', 5);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sessions`
 --
 
 CREATE TABLE `sessions` (
   `identifier` char(128) NOT NULL,
   `until` int(10) UNSIGNED NOT NULL,
   `userID` int(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Άδειασμα δεδομένων του πίνακα `sessions`
+-- Dumping data for table `sessions`
 --
 
 INSERT INTO `sessions` (`identifier`, `until`, `userID`) VALUES
-('9LEteSgIZBcOFNjkg0v1opm93K9xL3mi9Q68ePJt93PgtsLa3eZj1DLO5iVnOgGvFrKAHuxgm00vKSwiAsvwElvZpQp6I6cErfTNi9iJeie5yikJDGmty65BJ2KKnZCk', 1747411245, 1);
+('9LEteSgIZBcOFNjkg0v1opm93K9xL3mi9Q68ePJt93PgtsLa3eZj1DLO5iVnOgGvFrKAHuxgm00vKSwiAsvwElvZpQp6I6cErfTNi9iJeie5yikJDGmty65BJ2KKnZCk', 1747411245, 1),
+('jlatZXvjQBSQjGrL4snxh44B8VNMfiKJHYzKExF3Zam4ZmpQVDA9xYR7XBc80d7aD1TBTTh7bnXxlbJ0aVJoiHGvxXUNXS3zb2tYnp0JXrllhI7xO6ugX6yZRXgDVKVe', 1747421180, 1),
+('QVt2siHhDwhxtyFbv7FJ9EbDqcIJsOaLN8SjddRmvi99o6rm6TJQ1ZgL6qi4l8RvgbzE5GvrpjGlnfBwjKH9nNN8ovBEzHeMaFXMEfrG8MzoHnswb8a33vKmfTmldOxq', 1747484770, 1);
 
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `track`
+-- Table structure for table `track`
 --
 
 CREATE TABLE `track` (
@@ -120,10 +142,10 @@ CREATE TABLE `track` (
   `progress` int(11) DEFAULT NULL,
   `tvseason` int(11) DEFAULT NULL,
   `tvepisode` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Άδειασμα δεδομένων του πίνακα `track`
+-- Dumping data for table `track`
 --
 
 INSERT INTO `track` (`id`, `type`, `progress`, `tvseason`, `tvepisode`) VALUES
@@ -136,7 +158,7 @@ INSERT INTO `track` (`id`, `type`, `progress`, `tvseason`, `tvepisode`) VALUES
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -145,10 +167,10 @@ CREATE TABLE `users` (
   `username` text NOT NULL,
   `password` text NOT NULL,
   `joined` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Άδειασμα δεδομένων του πίνακα `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`userid`, `email`, `username`, `password`, `joined`) VALUES
@@ -163,16 +185,16 @@ INSERT INTO `users` (`userid`, `email`, `username`, `password`, `joined`) VALUES
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `user_achievements`
+-- Table structure for table `user_achievements`
 --
 
 CREATE TABLE `user_achievements` (
   `user_id` int(30) NOT NULL,
   `achievement_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Άδειασμα δεδομένων του πίνακα `user_achievements`
+-- Dumping data for table `user_achievements`
 --
 
 INSERT INTO `user_achievements` (`user_id`, `achievement_id`) VALUES
@@ -217,117 +239,129 @@ INSERT INTO `user_achievements` (`user_id`, `achievement_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Δομή πίνακα για τον πίνακα `user_badges`
+-- Table structure for table `user_badges`
 --
 
 CREATE TABLE `user_badges` (
   `user_id` int(11) NOT NULL,
   `badge_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Άδειασμα δεδομένων του πίνακα `user_badges`
+-- Dumping data for table `user_badges`
 --
 
 INSERT INTO `user_badges` (`user_id`, `badge_id`) VALUES
 (1, 1);
 
 --
--- Ευρετήρια για άχρηστους πίνακες
+-- Indexes for dumped tables
 --
 
 --
--- Ευρετήρια για πίνακα `achievements`
+-- Indexes for table `achievements`
 --
 ALTER TABLE `achievements`
   ADD PRIMARY KEY (`id`);
 
 --
--- Ευρετήρια για πίνακα `badges`
+-- Indexes for table `badges`
 --
 ALTER TABLE `badges`
   ADD PRIMARY KEY (`id`);
 
 --
--- Ευρετήρια για πίνακα `mylist`
+-- Indexes for table `mylist`
 --
 ALTER TABLE `mylist`
   ADD KEY `userid` (`userid`);
 
 --
--- Ευρετήρια για πίνακα `sessions`
+-- Indexes for table `ratings`
+--
+ALTER TABLE `ratings`
+  ADD PRIMARY KEY (`user_id`,`type`,`mvdb_id`);
+
+--
+-- Indexes for table `sessions`
 --
 ALTER TABLE `sessions`
   ADD PRIMARY KEY (`identifier`),
   ADD KEY `userID` (`userID`);
 
 --
--- Ευρετήρια για πίνακα `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`userid`);
 
 --
--- Ευρετήρια για πίνακα `user_achievements`
+-- Indexes for table `user_achievements`
 --
 ALTER TABLE `user_achievements`
   ADD PRIMARY KEY (`user_id`,`achievement_id`),
   ADD KEY `achievement_id` (`achievement_id`);
 
 --
--- Ευρετήρια για πίνακα `user_badges`
+-- Indexes for table `user_badges`
 --
 ALTER TABLE `user_badges`
   ADD PRIMARY KEY (`user_id`,`badge_id`),
   ADD KEY `fk_user_badges_badge_id` (`badge_id`);
 
 --
--- AUTO_INCREMENT για άχρηστους πίνακες
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT για πίνακα `achievements`
+-- AUTO_INCREMENT for table `achievements`
 --
 ALTER TABLE `achievements`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT για πίνακα `badges`
+-- AUTO_INCREMENT for table `badges`
 --
 ALTER TABLE `badges`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT για πίνακα `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `userid` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- Περιορισμοί για άχρηστους πίνακες
+-- Constraints for dumped tables
 --
 
 --
--- Περιορισμοί για πίνακα `mylist`
+-- Constraints for table `mylist`
 --
 ALTER TABLE `mylist`
   ADD CONSTRAINT `mylist_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`);
 
 --
--- Περιορισμοί για πίνακα `sessions`
+-- Constraints for table `ratings`
+--
+ALTER TABLE `ratings`
+  ADD CONSTRAINT `ratings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`userid`);
+
+--
+-- Constraints for table `sessions`
 --
 ALTER TABLE `sessions`
   ADD CONSTRAINT `sessions_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`userid`) ON DELETE CASCADE;
 
 --
--- Περιορισμοί για πίνακα `user_achievements`
+-- Constraints for table `user_achievements`
 --
 ALTER TABLE `user_achievements`
   ADD CONSTRAINT `user_achievements_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE,
   ADD CONSTRAINT `user_achievements_ibfk_2` FOREIGN KEY (`achievement_id`) REFERENCES `achievements` (`id`) ON DELETE CASCADE;
 
 --
--- Περιορισμοί για πίνακα `user_badges`
+-- Constraints for table `user_badges`
 --
 ALTER TABLE `user_badges`
   ADD CONSTRAINT `fk_user_badges_badge_id` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
