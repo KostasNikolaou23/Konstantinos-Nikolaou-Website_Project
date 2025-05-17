@@ -93,6 +93,8 @@ export function ContentCategorySelector({
 						}
 						enableFavoriteButton={true} // Enable favorite button
 						enableReviewButton={true} // Enable review button
+						mvdbID={item.id} // <-- Pass the correct id
+						type={type === "movies" ? "movie" : "tvseries"} // <-- Pass the correct type
 					/>
 				))}
 			</section>

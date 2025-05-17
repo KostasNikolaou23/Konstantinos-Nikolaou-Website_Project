@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom"; // <-- import useNavigate
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
@@ -11,6 +11,7 @@ import { addMyList, removeFromMyList, isInMyList } from "../Components/UserAPI";
 function ContentPreview({ type = "movie" }) {
     const { id } = useParams();
     const mvdb_id = id;
+    const navigate = useNavigate(); // <-- useNavigate hook
 
     const [details, setDetails] = useState(null);
     const [inMyList, setInMyList] = useState(false);
@@ -54,6 +55,10 @@ function ContentPreview({ type = "movie" }) {
             await addMyList(mvdb_id, type);
             setInMyList(true);
         }
+    };
+
+    const handleWatchNow = () => {
+        navigate(`/watchnow/${type}/${mvdb_id}`);
     };
 
     if (!details) {
@@ -103,7 +108,7 @@ function ContentPreview({ type = "movie" }) {
                 <Card.Text style={{ fontSize: "1.15rem" }}>{overview}</Card.Text>
                 <Row className="mt-4">
                     <Col xs="auto">
-                        <Button variant="primary" size="lg">
+                        <Button variant="primary" size="lg" onClick={handleWatchNow}>
                             Watch Now
                         </Button>
                     </Col>

@@ -89,7 +89,7 @@ async function getMovieDetails(movie_id) {
 		}
 
 		const data = await response.json();
-		console.log(data); // Log the full response to verify the structure
+		// console.log(data); // Log the full response to verify the structure
 		return data; // Return the full movie details object
 	} catch (error) {
 		console.error("Error fetching movie details:", error);
@@ -116,7 +116,7 @@ async function getTVDetails(tv_id) {
 		}
 
 		const data = await response.json();
-		console.log(data); // Log the full response to verify the structure
+		// console.log(data); // Log the full response to verify the structure
 		return data; // Return the full TV details object
 	} catch (error) {
 		console.error("Error fetching TV details:", error);
@@ -270,6 +270,61 @@ async function discoverContent(type, genre_ids, limit = 10) {
 	}
 }
 
+/**
+ * Get Greece (GR) watch providers for a movie
+ * @param {string|number} movie_id
+ * @returns {Promise<Object|null>} - The GR providers object or null if not found
+ */
+async function getMovieWatchProviders(movie_id) {
+    const url = `https://api.themoviedb.org/3/movie/${movie_id}/watch/providers`;
+    const params = new URLSearchParams({
+        api_key: apiKey,
+    });
+    try {
+        const response = await fetch(`${url}?${params.toString()}`, {
+            method: "GET",
+            headers: { accept: "application/json" },
+        });
+        if (!response.ok) {
+            throw new Error(`Error fetching movie watch providers: ${response.statusText}`);
+        }
+        const data = await response.json();
+				console.log("Watch Providers for Movie:", data.results.GR);
+        // Return only the GR (Greece) providers object, or null if not found
+        return data.results && data.results.GR ? data.results.GR : null;
+    } catch (error) {
+        console.error("Error fetching movie watch providers:", error);
+        throw error;
+    }
+}
+
+/**
+ * Get Greece (GR) watch providers for a TV series
+ * @param {string|number} tv_id
+ * @returns {Promise<Object|null>} - The GR providers object or null if not found
+ */
+async function getTVWatchProviders(tv_id) {
+    const url = `https://api.themoviedb.org/3/tv/${tv_id}/watch/providers`;
+    const params = new URLSearchParams({
+        api_key: apiKey,
+    });
+    try {
+        const response = await fetch(`${url}?${params.toString()}`, {
+            method: "GET",
+            headers: { accept: "application/json" },
+        });
+        if (!response.ok) {
+            throw new Error(`Error fetching TV watch providers: ${response.statusText}`);
+        }
+        const data = await response.json();
+        // Return only the GR (Greece) providers object, or null if not found
+        return data.results && data.results.GR ? data.results.GR : null;
+    } catch (error) {
+        console.error("Error fetching TV watch providers:", error);
+        throw error;
+    }
+}
+
 module.exports = {
 	getSearchResults,
 	getRecommendations,
@@ -278,4 +333,6 @@ module.exports = {
 	getImages,
 	getTrendingContent,
 	discoverContent,
+	getMovieWatchProviders, // <-- export
+	getTVWatchProviders,    // <-- export
 };

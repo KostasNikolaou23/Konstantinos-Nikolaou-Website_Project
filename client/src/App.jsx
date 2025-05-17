@@ -21,6 +21,7 @@ import TVSeries from "./Pages/TVSeries";
 import Kids from "./Pages/Kids";
 import Documentaries from "./Pages/Documentaries";
 import ContentPreview from "./Pages/ContentPreview";
+import WatchNow from "./Components/WatchNow";
 
 // Account Functionality
 import Login from "./Pages/User/Login";
@@ -62,7 +63,10 @@ function App() {
 							path="/tvseries/:id"
 							element={<ContentPreview type="tvseries" />}
 						/>
+						<Route path="/watchnow/:type/:id" element={<WatchNow />} />
 
+
+						{/* 404 Not Found */}
 						<Route
 							path="*"
 							element={

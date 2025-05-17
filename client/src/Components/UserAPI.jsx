@@ -130,21 +130,23 @@ export async function addMyList(mvdbID, type) {
 }
 
 export async function isInMyList(mvdbID, type) {
-	const session = await getSession();
-	if (!session.userid) return false;
+    const session = await getSession();
+    if (!session.userid) return false;
 
-	try {
-		const response = await fetch("http://localhost:5000/api/mylist/check", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-			body: JSON.stringify({
-				userID: session.userid,
-				mvdbID,
-				type,
-			}),
-		});
-		if (response.ok) {
+    console.log("isInMyList payload:", { userID: session.userid, mvdbID, type }); // Add this line
+
+    try {
+        const response = await fetch("http://localhost:5000/api/mylist/check", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                userID: session.userid,
+                mvdbID,
+                type,
+            }),
+        });
+        if (response.ok) {
 			const data = await response.json();
 			return data.exists === true;
 		}
