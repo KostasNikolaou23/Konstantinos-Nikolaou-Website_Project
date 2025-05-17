@@ -148,6 +148,10 @@ export function MyList() {
                                     poster={poster}
                                     type={type}
                                     added={item.added}
+                                    mvdbID={item.mvdbID} // <-- Add this line!
+                                    enableWatchButton={true}
+                                    enableFavoriteButton={true}
+                                    
                                 />
                             );
                         })
