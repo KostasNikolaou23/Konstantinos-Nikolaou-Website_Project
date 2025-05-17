@@ -11,7 +11,7 @@ export function Footer() {
 				<div className="footer-content">
 					<div className="row">
 						<div className="col">
-							<p>© 2025-26 Movie Cave. All rights reserved.</p>
+							<p>© 2025 Movie Cave. All rights reserved.</p>
 							<a
 								href="https://www.facebook.com"
 								target="_blank"
@@ -46,7 +46,7 @@ export function Footer() {
 
 								<FloatingLabel
 									controlId="floatingTextarea"
-									label="Enter your text here... Or not."
+									label="Enter your text here..."
 									className="mb-3"
 								>
 									<Form.Control as="textarea" placeholder="Leave a comment here" />
