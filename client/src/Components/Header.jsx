@@ -44,6 +44,20 @@ function Header() {
 		);
 	});
 
+	// At the top of your Header component
+	useEffect(() => {
+		// On mount, set body class based on cookie
+		const darkModeCookie = document.cookie
+			.split("; ")
+			.find((row) => row.startsWith("darkMode="))
+			?.split("=")[1] === "true";
+		if (darkModeCookie) {
+			document.body.classList.add("dark-mode");
+		} else {
+			document.body.classList.remove("dark-mode");
+		}
+	}, []);
+
 	// Toggles
 	const accountContainerRef = useRef(null); // <-- Add this ref
 	const toggleAccount = () => setAccountOpen(!accountOpen);

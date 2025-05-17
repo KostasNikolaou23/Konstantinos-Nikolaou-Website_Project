@@ -329,3 +329,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Add to your index.css */
+.navbar-light .navbar-nav .nav-link {
+  color: #1e1e1e !important; /* dark text for light mode */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: #f4faff !important; /* light text for dark mode */
+}
