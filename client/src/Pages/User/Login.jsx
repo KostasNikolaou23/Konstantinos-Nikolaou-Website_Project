@@ -29,6 +29,9 @@ export function Login() {
             const data = await response.json();
             console.log("Login successful:", data);
 
+            // Notify other components (like Header) to refresh session
+            window.dispatchEvent(new Event("sessionUpdate"));
+
             // Redirect to the home page on successful login
             navigate("/");
         } catch (err) {

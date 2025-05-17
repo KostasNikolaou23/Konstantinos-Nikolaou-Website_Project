@@ -62,28 +62,21 @@ function Header() {
 	useEffect(() => {
 		async function fetchSession() {
 			try {
-				console.log("Fetching session...");
-				const session = await getSession(); // Fetch session details
-				console.log("Session fetched:", session);
-
+				const session = await getSession();
 				if (session.username) {
-					setUsername(session.username); // Update username if session is valid
-					console.log("Username set to:", session.username);
+					setUsername(session.username);
 				} else {
-					console.log("No valid session found");
+					setUsername("Username");
 				}
 			} catch (error) {
-				console.error("Error fetching session:", error);
+				setUsername("Username");
 			}
 		}
 
 		fetchSession();
 
-		if (darkMode) {
-			document.body.classList.add("dark-mode");
-		} else {
-			document.body.classList.remove("dark-mode");
-		}
+		window.addEventListener("sessionUpdate", fetchSession);
+		return () => window.removeEventListener("sessionUpdate", fetchSession);
 	}, [darkMode]);
 
 	useEffect(() => {
