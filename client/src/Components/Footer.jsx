@@ -46,7 +46,7 @@ export function Footer() {
 
 								<FloatingLabel
 									controlId="floatingTextarea"
-									label="Enter your text here... Or not."
+									label="Enter your text here...."
 									className="mb-3"
 								>
 									<Form.Control as="textarea" placeholder="Leave a comment here" />
