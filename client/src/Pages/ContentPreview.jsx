@@ -113,7 +113,11 @@ function ContentPreview({ type = "movie" }) {
                         </Button>
                     </Col>
                     <Col xs="auto">
-                        <Button variant="outline-primary" size="lg">
+                        <Button
+                            variant="outline-primary"
+                            size="lg"
+                            onClick={() => navigate(`/rate/${type}/${mvdb_id}`)}
+                        >
                             <i className="fa fa-star"></i> Rate it
                         </Button>
                     </Col>

@@ -76,7 +76,13 @@ export function GridItem({
           </div>
           {enableReviewButton && (
             <div className="col d-flex justify-content-end">
-              <button className="btn btn-primary">Rate it</button>
+              <button
+                className="btn btn-primary"
+                type="button"
+                onClick={() => navigate(`/rate/${type}/${mvdbID}`)}
+              >
+                Rate it
+              </button>
             </div>
           )}
           {enableFavoriteButton && loggedIn && (
