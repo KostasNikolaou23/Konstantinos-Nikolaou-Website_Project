@@ -74,7 +74,7 @@ export function GridItem({
               Watch Now
             </button>
           </div>
-          {enableReviewButton && (
+          {enableReviewButton && loggedIn && (
             <div className="col d-flex justify-content-end">
               <button
                 className="btn btn-primary"
