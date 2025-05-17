@@ -573,6 +573,16 @@ app.post("/api/user/achievements/top", async (req, res) => {
 	}
 });
 
+// Get all achievements within the site
+app.get("/api/achievements/all", async (req, res) => {
+    try {
+        const [rows] = await db.query("SELECT id, name, description FROM achievements");
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Logout route
 app.post("/api/user/logout", async (req, res) => {
 	const sessionId = req.cookies.session;
