@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const db = require("./db");
 const secure = require("./secure");
+const rewarder = require("./rewarder");
 const app = express();
 const PORT = process.env.PORT || 5000; // Διαφορετικό port από το 3000 της React
 
@@ -31,104 +32,152 @@ app.get("/api/data", async (req, res) => {
 // ----------------------------------
 // Get movies JSON for userID
 app.get("/api/mylist/movies/:userID", async (req, res) => {
-	const userID = req.params.userID;
-
-	// Validate input
-	if (!userID) {
-		return res.status(400).json({ message: "User ID is required" });
-	}
-
-	try {
-		// Select only the 'movies' column for the given userID
-		const [rows] = await db.query("SELECT movies FROM mylist WHERE userID = ?", [
-			userID,
-		]);
-
-		// If no rows are found, return a 404 response
-		if (rows.length === 0) {
-			return res.status(404).json({ message: "No movies found for this user" });
-		}
-
-		// Return the 'movies' column
-		res.json({ movies: rows[0].movies });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    const userID = req.params.userID;
+    if (!userID) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
+    try {
+        const [rows] = await db.query("SELECT movies FROM mylist WHERE userID = ?", [userID]);
+        if (rows.length === 0) {
+            // Instead of 404, return empty array
+            return res.json({ movies: [] });
+        }
+        res.json({ movies: JSON.parse(rows[0].movies) });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Get tvseries JSON for userID
 app.get("/api/mylist/tvseries/:userID", async (req, res) => {
-	const userID = req.params.userID;
-
-	// Validate input
-	if (!userID) {
-		return res.status(400).json({ message: "User ID is required" });
-	}
-
-	try {
-		// Select only the 'tvseries' column for the given userID
-		const [rows] = await db.query(
-			"SELECT tvseries FROM mylist WHERE userID = ?",
-			[userID]
-		);
-
-		// If no rows are found, return a 404 response
-		if (rows.length === 0) {
-			return res.status(404).json({ message: "No tvseries found for this user" });
-		}
-
-		// Return the 'tvseries' column
-		res.json({ tvseries: rows[0].tvseries });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    const userID = req.params.userID;
+    if (!userID) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
+    try {
+        const [rows] = await db.query("SELECT tvseries FROM mylist WHERE userID = ?", [userID]);
+        if (rows.length === 0) {
+            // Instead of 404, return empty array
+            return res.json({ tvseries: [] });
+        }
+        res.json({ tvseries: JSON.parse(rows[0].tvseries) });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Add movie to mylist
 app.post("/api/mylist/movies", async (req, res) => {
-	const { userID, movieID } = req.body;
+    const { userID, movieID } = req.body;
+    if (!userID || !movieID) {
+        return res.status(400).json({ message: "User ID and Movie ID are required" });
+    }
+    try {
+        // Check if a mylist row exists for this user
+        const [rows] = await db.query(
+            "SELECT movies FROM mylist WHERE userID = ?",
+            [userID]
+        );
 
-	// Validate input
-	if (!userID || !movieID) {
-		return res.status(400).json({ message: "User ID and Movie ID are required" });
-	}
+        let arr = [];
+        if (rows.length > 0) {
+            // Row exists, parse the array
+            try {
+                arr = JSON.parse(rows[0].movies);
+            } catch {
+                arr = [];
+            }
+        }
 
-	try {
-		const addedDate = secure.getCurrentDate(); // Get the current date in YYYY-MM-DD format
-		const newMovie = JSON.stringify({ mvdbID: movieID, added: addedDate }); // Create the new movie object to append
+        // Prevent duplicates
+        if (arr.some((item) => String(item.mvdbID) === String(movieID))) {
+            return res.status(409).json({ message: "Already in MyList" });
+        }
 
-		// Update the 'movies' column by appending the new movie object
-		await db.query(
-			"UPDATE mylist SET movies = JSON_ARRAY_APPEND(movies, '$', CAST(? AS JSON)) WHERE userID = ?",
-			[newMovie, userID]
-		);
+        // Add new item
+        const addedDate = secure.getCurrentDate();
+        arr.push({
+            mvdbID: movieID,
+            status: "to_watch",
+            added: addedDate,
+            watched_status: 0,
+        });
 
-		res.status(201).json({ message: "Movie added to mylist" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+        if (rows.length > 0) {
+            // Update existing row
+            await db.query(
+                "UPDATE mylist SET movies = ? WHERE userID = ?",
+                [JSON.stringify(arr), userID]
+            );
+        } else {
+            // Insert new row
+            await db.query(
+                "INSERT INTO mylist (userID, movies, tvseries) VALUES (?, ?, ?)",
+                [userID, JSON.stringify(arr), "[]"]
+            );
+        }
+
+        res.status(201).json({ message: "Movie added to mylist" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Add tvseries to mylist
 app.post("/api/mylist/tvseries", async (req, res) => {
-	const { userID, tvseriesID } = req.body;
+    const { userID, tvseriesID } = req.body;
+    if (!userID || !tvseriesID) {
+        return res.status(400).json({ message: "User ID and TV Series ID are required" });
+    }
+    try {
+        // Check if a mylist row exists for this user
+        const [rows] = await db.query(
+            "SELECT tvseries FROM mylist WHERE userID = ?",
+            [userID]
+        );
 
-	// Validate input
-	if (!userID || !tvseriesID) {
-		return res
-			.status(400)
-			.json({ message: "User ID and TV Series ID are required" });
-	}
+        let arr = [];
+        if (rows.length > 0) {
+            // Row exists, parse the array
+            try {
+                arr = JSON.parse(rows[0].tvseries);
+            } catch {
+                arr = [];
+            }
+        }
 
-	try {
-		await db.query(
-			"UPDATE mylist SET tvseries = JSON_ARRAY_APPEND(tvseries, '$', ?) WHERE userID = ?",
-			[tvseriesID, userID]
-		);
-		res.status(201).json({ message: "TV Series added to mylist" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+        // Prevent duplicates
+        if (arr.some((item) => String(item.mvdbID) === String(tvseriesID))) {
+            return res.status(409).json({ message: "Already in MyList" });
+        }
+
+        // Add new item
+        const addedDate = secure.getCurrentDate();
+        arr.push({
+            mvdbID: tvseriesID,
+            status: "to_watch",
+            added: addedDate,
+            watched_status: 0,
+        });
+
+        if (rows.length > 0) {
+            // Update existing row
+            await db.query(
+                "UPDATE mylist SET tvseries = ? WHERE userID = ?",
+                [JSON.stringify(arr), userID]
+            );
+        } else {
+            // Insert new row
+            await db.query(
+                "INSERT INTO mylist (userID, movies, tvseries) VALUES (?, ?, ?)",
+                [userID, "[]", JSON.stringify(arr)]
+            );
+        }
+
+        res.status(201).json({ message: "TV Series added to mylist" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.post("/api/mylist/remove", async (req, res) => {
@@ -166,50 +215,63 @@ app.post("/api/mylist/remove", async (req, res) => {
 });
 
 app.post("/api/mylist/add", async (req, res) => {
-	const { userID, mvdbID, type } = req.body;
-	if (!userID || !mvdbID || !type) {
-		return res
-			.status(400)
-			.json({ message: "userID, mvdbID, and type are required" });
-	}
-	try {
-		// Get current list
-		const [rows] = await db.query(
-			`SELECT ${
-				type === "movie" ? "movies" : "tvseries"
-			} FROM mylist WHERE userID = ?`,
-			[userID]
-		);
-		let arr = [];
-		if (rows.length > 0) {
-			try {
-				arr = JSON.parse(rows[0][type === "movie" ? "movies" : "tvseries"]);
-			} catch {
-				arr = [];
-			}
-		}
-		// Prevent duplicates
-		if (arr.some((item) => String(item.mvdbID) === String(mvdbID))) {
-			return res.status(409).json({ message: "Already in MyList" });
-		}
-		// Add new item
-		const addedDate = secure.getCurrentDate();
-		arr.push({
-			mvdbID,
-			status: "to_watch",
-			added: addedDate,
-			watched_status: 0,
-		});
-		await db.query(
-			`UPDATE mylist SET ${
-				type === "movie" ? "movies" : "tvseries"
-			} = ? WHERE userID = ?`,
-			[JSON.stringify(arr), userID]
-		);
-		res.status(201).json({ message: "Added to MyList" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    const { userID, mvdbID, type } = req.body;
+    if (!userID || !mvdbID || !type) {
+        return res
+            .status(400)
+            .json({ message: "userID, mvdbID, and type are required" });
+    }
+    try {
+        // Get current list
+        const [rows] = await db.query(
+            `SELECT movies, tvseries FROM mylist WHERE userID = ?`,
+            [userID]
+        );
+
+        let arr = [];
+        let isMovie = type === "movie";
+        if (rows.length > 0) {
+            try {
+                arr = JSON.parse(rows[0][isMovie ? "movies" : "tvseries"]);
+            } catch {
+                arr = [];
+            }
+        }
+
+        // Prevent duplicates
+        if (arr.some((item) => String(item.mvdbID) === String(mvdbID))) {
+            return res.status(409).json({ message: "Already in MyList" });
+        }
+
+        // Add new item
+        const addedDate = secure.getCurrentDate();
+        arr.push({
+            mvdbID,
+            status: "to_watch",
+            added: addedDate,
+            watched_status: 0,
+        });
+
+        if (rows.length > 0) {
+            // Update existing row
+            await db.query(
+                `UPDATE mylist SET ${isMovie ? "movies" : "tvseries"} = ? WHERE userID = ?`,
+                [JSON.stringify(arr), userID]
+            );
+        } else {
+            // Insert new row
+            const moviesArr = isMovie ? JSON.stringify(arr) : "[]";
+            const tvArr = !isMovie ? JSON.stringify(arr) : "[]";
+            await db.query(
+                "INSERT INTO mylist (userID, movies, tvseries) VALUES (?, ?, ?)",
+                [userID, moviesArr, tvArr]
+            );
+        }
+
+        res.status(201).json({ message: "Added to MyList" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.post("/api/mylist/check", async (req, res) => {
