@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addMyList, removeFromMyList, isInMyList, getSession } from "../../../UserAPI";
 import Stack from "react-bootstrap/Stack";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 
 export function GridCard({
     name,
@@ -54,39 +56,32 @@ export function GridCard({
     };
 
     return (
-        <div className="card">
-            <img src={poster} alt={name} className="card-image" />
-            <div className="card-content">
-                <h2 className="card-seriesname">{name}</h2>
+        <Card className="card">
+            <Card.Img variant="top" src={poster} alt={name} className="card-image" />
+            <Card.Body>
+                <Card.Title className="card-seriesname">{name}</Card.Title>
                 <Stack gap={3}>
                     Added: {added} <br />
                 </Stack>
-                <div className="d-flex gap-2 mt-2">
+                <div className="d-flex justify-content-between align-items-center mt-3">
                     {enableWatchButton && (
-                        <button
-                            type="button"
-                            className="watch-button"
-                            onClick={handleWatchNow}
-                            data-mvdbid={mvdbID}
-                            data-type={type}
-                        >
+                        <Button variant="primary" onClick={handleWatchNow}>
                             Watch Now
-                        </button>
+                        </Button>
                     )}
                     {enableFavoriteButton && loggedIn && (
                         <button
                             className={`btn ${inMyList ? "btn-outline-danger" : "btn-danger"}`}
                             onClick={handleMyListClick}
                             disabled={loading || !loggedIn}
-                            data-mvdbid={mvdbID}
-                            data-type={type}
+                            style={{ marginLeft: "auto" }}
                         >
                             <i className={inMyList ? "fa fa-heart-broken" : "fa fa-heart"}></i>
                         </button>
                     )}
                 </div>
-            </div>
-        </div>
+            </Card.Body>
+        </Card>
     );
 }
 
