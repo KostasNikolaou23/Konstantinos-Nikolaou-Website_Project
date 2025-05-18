@@ -21,21 +21,24 @@ export default function Profile({ view_profile = false }) {
             try {
                 let data;
                 if (view_profile) {
-                    // Fetch current user's profile
                     data = await fetchUserProfile();
                 } else if (username) {
-                    // Fetch another user's profile (implement this endpoint in your backend)
                     const response = await fetch(`http://localhost:5000/api/user/profile/${username}`);
                     if (!response.ok) throw new Error("Failed to fetch user profile");
                     data = await response.json();
                 }
                 setUserData(data);
+                console.log("userData loaded:", data);
             } catch (err) {
                 setError(err.message);
             }
         }
         loadProfile();
     }, [view_profile, username]);
+
+    // Debug
+    console.log("userData:", userData);
+    console.log("userData?.stats:", userData?.stats);
 
     return (
         <Container style={{ marginTop: "2rem" }}>
@@ -49,8 +52,8 @@ export default function Profile({ view_profile = false }) {
                             maxWidth: "150px",
                             maxHeight: "150px",
                             borderRadius: "50%",
-                            border: "3px solid #000", // Black outline
-                            boxShadow: "0 0 8px rgba(0,0,0,0.10)" // Optional subtle shadow
+                            border: "3px solid #000",
+                            boxShadow: "0 0 8px rgba(0,0,0,0.10)"
                         }}
                     />
                     <h2 style={{ marginTop: "1rem", textAlign: "center" }}>
@@ -92,7 +95,6 @@ export default function Profile({ view_profile = false }) {
                                     <span>No badges yet.</span>
                                 )}
                             </div>
-                            {/* Achievements and Statistics side by side */}
                             <Row className="align-items-start">
                                 <Col md={6}>
                                     <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
@@ -115,7 +117,7 @@ export default function Profile({ view_profile = false }) {
                                     <div style={{ width: "100%", minWidth: 0, paddingRight: 40 }}>
                                         <Bar
                                             data={{
-                                                                                                labels: ['Movies', 'TV Series', 'Kids', 'Documentary'],
+                                                labels: ['Movies', 'TV Series', 'Kids', 'Documentary'],
                                                 datasets: [
                                                     {
                                                         label: 'Clicks',
@@ -143,13 +145,12 @@ export default function Profile({ view_profile = false }) {
                                                 },
                                                 layout: {
                                                     padding: {
-                                                        right: 40 // Add extra space to the right
+                                                        right: 40
                                                     }
                                                 },
                                                 scales: {
                                                     y: {
                                                         beginAtZero: true,
-                                                        min: 1,
                                                         max: 10,
                                                         ticks: {
                                                             stepSize: 1

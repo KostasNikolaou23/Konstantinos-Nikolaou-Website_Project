@@ -76,61 +76,60 @@ app.get("/api/analytics/user/:userId", async (req, res) => {
 });
 
 app.post("/api/analytics/movies/:userId", async (req, res) => {
-	const userId = req.params.userId;
-	if (!userId) {
-		return res.status(400).json({ message: "User ID is required" });
-	}
+    const userId = req.params.userId;
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
 
-	try {
-		await setUserMovieClicks(userId);
-		res.json({ message: "Movie clicks incremented" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    try {
+        await analytica.setUserMovieClicks(userId);
+        res.json({ message: "Movie clicks incremented" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.post("/api/analytics/tvseries/:userId", async (req, res) => {
-	const userId = req.params.userId;
-	if (!userId) {
-		return res.status(400).json({ message: "User ID is required" });
-	}
+    const userId = req.params.userId;
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
 
-	try {
-		await setUserTvSeriesClicks(userId);
-		res.json({ message: "TV Series clicks incremented" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    try {
+        await analytica.setUserTvSeriesClicks(userId);
+        res.json({ message: "TV Series clicks incremented" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.post("/api/analytics/kids/:userId", async (req, res) => {
-	const userId = req.params.userId;
-	if (!userId) {
-		return res.status(400).json({ message: "User ID is required" });
-	}
+    const userId = req.params.userId;
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
 
-	try {
-		await setUserKidsClicks(userId);
-		res.json({ message: "Kids clicks incremented" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    try {
+        await analytica.setUserKidsClicks(userId);
+        res.json({ message: "Kids clicks incremented" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.post("/api/analytics/documentary/:userId", async (req, res) => {
-	const userId = req.params.userId;
-	if (!userId) {
-		return res.status(400).json({ message: "User ID is required" });
-	}
+    const userId = req.params.userId;
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
 
-	try {
-		await setUserDocumentaryClicks(userId);
-		res.json({ message: "Documentary clicks incremented" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+    try {
+        await analytica.setUserDocumentaryClicks(userId);
+        res.json({ message: "Documentary clicks incremented" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
-
 
 // MyList APIs
 // ----------------------------------
@@ -568,6 +567,61 @@ app.get("/api/user/me", async (req, res) => {
         );
 
         // --- Get statistics using analytica.js ---
+        const stats = {
+            movie_clicks: await analytica.getUserMovieClicks(user.userid),
+            tv_series_clicks: await analytica.getUserTvSeriesClicks(user.userid),
+            kids_clicks: await analytica.getUserKidsClicks(user.userid),
+            documentary_clicks: await analytica.getUserDocumentaryClicks(user.userid),
+        };
+
+        res.json({
+            username: user.username,
+            badges: badgesRows.map((b) => b.name),
+            achievements: achievementsRows.map((a) => a.name),
+            stats, // <-- send stats to frontend
+        });
+    } catch (error) {
+        console.error("Error in /api/user/me:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get("/api/user/profile/:username", async (req, res) => {
+    const username = req.params.username;
+    if (!username) {
+        return res.status(400).json({ message: "Username is required" });
+    }
+
+    try {
+        // Get user info
+        const [userRows] = await db.query(
+            "SELECT userid, username FROM users WHERE username = ?",
+            [username]
+        );
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const user = userRows[0];
+
+        // Get badges
+        const [badgesRows] = await db.query(
+            `SELECT b.name 
+             FROM user_badges ub 
+             JOIN badges b ON ub.badge_id = b.id 
+             WHERE ub.user_id = ?`,
+            [user.userid]
+        );
+
+        // Get achievements
+        const [achievementsRows] = await db.query(
+            `SELECT a.name
+             FROM user_achievements ua
+             JOIN achievements a ON ua.achievement_id = a.id
+             WHERE ua.user_id = ?`,
+            [user.userid]
+        );
+
+        // Get statistics
         const movieClicksArr = await analytica.getUserMovieClicks(user.userid);
         const tvSeriesClicksArr = await analytica.getUserTvSeriesClicks(user.userid);
         const kidsClicksArr = await analytica.getUserKidsClicks(user.userid);
@@ -584,10 +638,9 @@ app.get("/api/user/me", async (req, res) => {
             username: user.username,
             badges: badgesRows.map((b) => b.name),
             achievements: achievementsRows.map((a) => a.name),
-            stats, // <-- send stats to frontend
+            stats,
         });
     } catch (error) {
-        console.error("Error in /api/user/me:", error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -781,39 +834,3 @@ app.get("/api/getRating/:userID/:mvdbID/:type", async (req, res) => {
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
-
-async function setUserMovieClicks(userId) {
-    const [user] = await db.query("SELECT * FROM statistics WHERE user_id = ?", [userId]);
-    if (user.length === 0) {
-        return db.query("INSERT INTO statistics (user_id, movie_clicks, tv_series_clicks, kids_clicks, documentary_clicks) VALUES (?, 1, 0, 0, 0)", [userId]);
-    } else {
-        return db.query("UPDATE statistics SET movie_clicks = movie_clicks + 1 WHERE user_id = ?", [userId]);
-    }
-}
-
-async function setUserTvSeriesClicks(userId) {
-    const [user] = await db.query("SELECT * FROM statistics WHERE user_id = ?", [userId]);
-    if (user.length === 0) {
-        return db.query("INSERT INTO statistics (user_id, movie_clicks, tv_series_clicks, kids_clicks, documentary_clicks) VALUES (?, 0, 1, 0, 0)", [userId]);
-    } else {
-        return db.query("UPDATE statistics SET tv_series_clicks = tv_series_clicks + 1 WHERE user_id = ?", [userId]);
-    }
-}
-
-async function setUserKidsClicks(userId) {
-    const [user] = await db.query("SELECT * FROM statistics WHERE user_id = ?", [userId]);
-    if (user.length === 0) {
-        return db.query("INSERT INTO statistics (user_id, movie_clicks, tv_series_clicks, kids_clicks, documentary_clicks) VALUES (?, 0, 0, 1, 0)", [userId]);
-    } else {
-        return db.query("UPDATE statistics SET kids_clicks = kids_clicks + 1 WHERE user_id = ?", [userId]);
-    }
-}
-
-async function setUserDocumentaryClicks(userId) {
-    const [user] = await db.query("SELECT * FROM statistics WHERE user_id = ?", [userId]);
-    if (user.length === 0) {
-        return db.query("INSERT INTO statistics (user_id, movie_clicks, tv_series_clicks, kids_clicks, documentary_clicks) VALUES (?, 0, 0, 0, 1)", [userId]);
-    } else {
-        return db.query("UPDATE statistics SET documentary_clicks = documentary_clicks + 1 WHERE user_id = ?", [userId]);
-    }
-}
