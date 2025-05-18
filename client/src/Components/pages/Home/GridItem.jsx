@@ -66,7 +66,12 @@ export function GridItem({
     <div className="card">
       <img src={cardImage} alt={cardName} className="card-image" />
       <div className="card-content">
-        <h2>{cardName}</h2>
+        <h2
+          style={{ cursor: "pointer", color: "#007bff", textDecoration: "underline" }}
+          onClick={() => navigate(`/${type}/${mvdbID}`)}
+        >
+          {cardName}
+        </h2>
         <p>{cardDesc.length > 130 ? cardDesc.substring(0, 130) + "..." : cardDesc}</p>
         <div className="row" style={{ marginLeft: "5px", marginRight: "5px" }}>
           <div className="col">
