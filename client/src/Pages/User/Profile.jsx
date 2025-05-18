@@ -7,6 +7,9 @@ import Badge from "react-bootstrap/Badge";
 import Card from "react-bootstrap/Card";
 import defaultPicture from "../../Components/pages/User/Profile/default-user.jpg";
 import { fetchUserProfile } from "../../Components/UserAPI";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function Profile({ view_profile = false }) {
     const [userData, setUserData] = useState(null);
@@ -74,7 +77,6 @@ export default function Profile({ view_profile = false }) {
                                             }}
                                         >
                                             {badge}
-                                            {/* Show crown icon for all badges, or only for specific ones if you want */}
                                             <i
                                                 className="fa-solid fa-crown"
                                                 style={{
@@ -90,16 +92,70 @@ export default function Profile({ view_profile = false }) {
                                     <span>No badges yet.</span>
                                 )}
                             </div>
-                            <Card.Title>My Achievements</Card.Title>
-                            <ul>
-                                {userData &&
-                                userData.achievements &&
-                                userData.achievements.length > 0 ? (
-                                    userData.achievements.map((ach, idx) => <li key={idx}>{ach}</li>)
-                                ) : (
-                                    <li>No achievements yet.</li>
-                                )}
-                            </ul>
+                            {/* Achievements and Statistics side by side */}
+                            <Row className="align-items-start">
+                                <Col md={6}>
+                                    <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+                                        <Card.Title style={{ marginBottom: 0, marginRight: "1rem" }}>My Achievements</Card.Title>
+                                    </div>
+                                    <ul>
+                                        {userData &&
+                                        userData.achievements &&
+                                        userData.achievements.length > 0 ? (
+                                            userData.achievements.map((ach, idx) => <li key={idx}>{ach}</li>)
+                                        ) : (
+                                            <li>No achievements yet.</li>
+                                        )}
+                                    </ul>
+                                </Col>
+                                <Col md={6}>
+                                    <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+                                        <Card.Title style={{ marginBottom: 0 }}>My Statistics | Number of clicks</Card.Title>
+                                    </div>
+                                    <div style={{ maxWidth: 600, minHeight: 350 }}>
+                                        <Bar
+                                            data={{
+                                                labels: ['Movies', 'TV Series', 'Kids', 'Documentary'],
+                                                datasets: [
+                                                    {
+                                                        label: 'Clicks',
+                                                        data: [
+                                                            userData?.stats?.movie_clicks || 0,
+                                                            userData?.stats?.tv_series_clicks || 0,
+                                                            userData?.stats?.kids_clicks || 0,
+                                                            userData?.stats?.documentary_clicks || 0,
+                                                        ],
+                                                        backgroundColor: [
+                                                            '#0dcaf0',
+                                                            '#6610f2',
+                                                            '#ffc107',
+                                                            '#198754'
+                                                        ],
+                                                    },
+                                                ],
+                                            }}
+                                            options={{
+                                                responsive: true,
+                                                plugins: {
+                                                    legend: { display: false },
+                                                    title: { display: false }
+                                                },
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true,
+                                                        min: 1,
+                                                        max: 10,
+                                                        ticks: {
+                                                            stepSize: 1
+                                                        }
+                                                    }
+                                                }
+                                            }}
+                                            height={350}
+                                        />
+                                    </div>
+                                </Col>
+                            </Row>
                             {error && <p style={{ color: "red" }}>{error}</p>}
                         </Card.Body>
                     </Card>
