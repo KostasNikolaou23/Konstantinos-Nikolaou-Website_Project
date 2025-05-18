@@ -56,29 +56,31 @@ export function GridCard({
     };
 
     return (
-        <Card className="card">
+        <Card className="card h-100 d-flex flex-column">
             <Card.Img variant="top" src={poster} alt={name} className="card-image" />
-            <Card.Body>
+            <Card.Body className="d-flex flex-column">
                 <Card.Title className="card-seriesname">{name}</Card.Title>
                 <Stack gap={3}>
                     Added: {added} <br />
                 </Stack>
-                <div className="d-flex justify-content-between align-items-center mt-3">
-                    {enableWatchButton && (
-                        <Button variant="primary" onClick={handleWatchNow}>
-                            Watch Now
-                        </Button>
-                    )}
-                    {enableFavoriteButton && loggedIn && (
-                        <button
-                            className={`btn ${inMyList ? "btn-outline-danger" : "btn-danger"}`}
-                            onClick={handleMyListClick}
-                            disabled={loading || !loggedIn}
-                            style={{ marginLeft: "auto" }}
-                        >
-                            <i className={inMyList ? "fa fa-heart-broken" : "fa fa-heart"}></i>
-                        </button>
-                    )}
+                {/* Pushes the button row to the bottom */}
+                <div style={{ marginTop: "auto" }}>
+                    <div className="d-flex justify-content-between align-items-center">
+                        {enableWatchButton && (
+                            <Button variant="primary" onClick={handleWatchNow}>
+                                Watch Now
+                            </Button>
+                        )}
+                        {enableFavoriteButton && loggedIn && (
+                            <button
+                                className={`btn ${inMyList ? "btn-outline-danger" : "btn-danger"}`}
+                                onClick={handleMyListClick}
+                                disabled={loading || !loggedIn}
+                            >
+                                <i className={inMyList ? "fa fa-heart-broken" : "fa fa-heart"}></i>
+                            </button>
+                        )}
+                    </div>
                 </div>
             </Card.Body>
         </Card>
