@@ -623,6 +623,7 @@ app.post("/api/setRating", async (req, res) => {
              ON DUPLICATE KEY UPDATE rating = ?`,
             [userID, mvdbID, type, rating, rating]
         );
+				rewarder.checkUserAchievementProgress(userID, mvdbID); // Check for possible rewards
         res.status(200).json({ message: "Rating saved" });
     } catch (error) {
         res.status(500).json({ error: error.message });
