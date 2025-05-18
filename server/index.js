@@ -32,152 +32,158 @@ app.get("/api/data", async (req, res) => {
 // ----------------------------------
 // Get movies JSON for userID
 app.get("/api/mylist/movies/:userID", async (req, res) => {
-    const userID = req.params.userID;
-    if (!userID) {
-        return res.status(400).json({ message: "User ID is required" });
-    }
-    try {
-        const [rows] = await db.query("SELECT movies FROM mylist WHERE userID = ?", [userID]);
-        if (rows.length === 0) {
-            // Instead of 404, return empty array
-            return res.json({ movies: [] });
-        }
-        res.json({ movies: JSON.parse(rows[0].movies) });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+	const userID = req.params.userID;
+	if (!userID) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
+	try {
+		const [rows] = await db.query("SELECT movies FROM mylist WHERE userID = ?", [
+			userID,
+		]);
+		if (rows.length === 0) {
+			// Instead of 404, return empty array
+			return res.json({ movies: [] });
+		}
+		res.json({ movies: JSON.parse(rows[0].movies) });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Get tvseries JSON for userID
 app.get("/api/mylist/tvseries/:userID", async (req, res) => {
-    const userID = req.params.userID;
-    if (!userID) {
-        return res.status(400).json({ message: "User ID is required" });
-    }
-    try {
-        const [rows] = await db.query("SELECT tvseries FROM mylist WHERE userID = ?", [userID]);
-        if (rows.length === 0) {
-            // Instead of 404, return empty array
-            return res.json({ tvseries: [] });
-        }
-        res.json({ tvseries: JSON.parse(rows[0].tvseries) });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+	const userID = req.params.userID;
+	if (!userID) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
+	try {
+		const [rows] = await db.query(
+			"SELECT tvseries FROM mylist WHERE userID = ?",
+			[userID]
+		);
+		if (rows.length === 0) {
+			// Instead of 404, return empty array
+			return res.json({ tvseries: [] });
+		}
+		res.json({ tvseries: JSON.parse(rows[0].tvseries) });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Add movie to mylist
 app.post("/api/mylist/movies", async (req, res) => {
-    const { userID, movieID } = req.body;
-    if (!userID || !movieID) {
-        return res.status(400).json({ message: "User ID and Movie ID are required" });
-    }
-    try {
-        // Check if a mylist row exists for this user
-        const [rows] = await db.query(
-            "SELECT movies FROM mylist WHERE userID = ?",
-            [userID]
-        );
+	const { userID, movieID } = req.body;
+	if (!userID || !movieID) {
+		return res.status(400).json({ message: "User ID and Movie ID are required" });
+	}
+	try {
+		// Check if a mylist row exists for this user
+		const [rows] = await db.query("SELECT movies FROM mylist WHERE userID = ?", [
+			userID,
+		]);
 
-        let arr = [];
-        if (rows.length > 0) {
-            // Row exists, parse the array
-            try {
-                arr = JSON.parse(rows[0].movies);
-            } catch {
-                arr = [];
-            }
-        }
+		let arr = [];
+		if (rows.length > 0) {
+			// Row exists, parse the array
+			try {
+				arr = JSON.parse(rows[0].movies);
+			} catch {
+				arr = [];
+			}
+		}
 
-        // Prevent duplicates
-        if (arr.some((item) => String(item.mvdbID) === String(movieID))) {
-            return res.status(409).json({ message: "Already in MyList" });
-        }
+		// Prevent duplicates
+		if (arr.some((item) => String(item.mvdbID) === String(movieID))) {
+			return res.status(409).json({ message: "Already in MyList" });
+		}
 
-        // Add new item
-        const addedDate = secure.getCurrentDate();
-        arr.push({
-            mvdbID: movieID,
-            status: "to_watch",
-            added: addedDate,
-            watched_status: 0,
-        });
+		// Add new item
+		const addedDate = secure.getCurrentDate();
+		arr.push({
+			mvdbID: movieID,
+			status: "to_watch",
+			added: addedDate,
+			watched_status: 0,
+		});
 
-        if (rows.length > 0) {
-            // Update existing row
-            await db.query(
-                "UPDATE mylist SET movies = ? WHERE userID = ?",
-                [JSON.stringify(arr), userID]
-            );
-        } else {
-            // Insert new row
-            await db.query(
-                "INSERT INTO mylist (userID, movies, tvseries) VALUES (?, ?, ?)",
-                [userID, JSON.stringify(arr), "[]"]
-            );
-        }
+		if (rows.length > 0) {
+			// Update existing row
+			await db.query("UPDATE mylist SET movies = ? WHERE userID = ?", [
+				JSON.stringify(arr),
+				userID,
+			]);
+		} else {
+			// Insert new row
+			await db.query(
+				"INSERT INTO mylist (userID, movies, tvseries) VALUES (?, ?, ?)",
+				[userID, JSON.stringify(arr), "[]"]
+			);
+		}
 
-        res.status(201).json({ message: "Movie added to mylist" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		res.status(201).json({ message: "Movie added to mylist" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Add tvseries to mylist
 app.post("/api/mylist/tvseries", async (req, res) => {
-    const { userID, tvseriesID } = req.body;
-    if (!userID || !tvseriesID) {
-        return res.status(400).json({ message: "User ID and TV Series ID are required" });
-    }
-    try {
-        // Check if a mylist row exists for this user
-        const [rows] = await db.query(
-            "SELECT tvseries FROM mylist WHERE userID = ?",
-            [userID]
-        );
+	const { userID, tvseriesID } = req.body;
+	if (!userID || !tvseriesID) {
+		return res
+			.status(400)
+			.json({ message: "User ID and TV Series ID are required" });
+	}
+	try {
+		// Check if a mylist row exists for this user
+		const [rows] = await db.query(
+			"SELECT tvseries FROM mylist WHERE userID = ?",
+			[userID]
+		);
 
-        let arr = [];
-        if (rows.length > 0) {
-            // Row exists, parse the array
-            try {
-                arr = JSON.parse(rows[0].tvseries);
-            } catch {
-                arr = [];
-            }
-        }
+		let arr = [];
+		if (rows.length > 0) {
+			// Row exists, parse the array
+			try {
+				arr = JSON.parse(rows[0].tvseries);
+			} catch {
+				arr = [];
+			}
+		}
 
-        // Prevent duplicates
-        if (arr.some((item) => String(item.mvdbID) === String(tvseriesID))) {
-            return res.status(409).json({ message: "Already in MyList" });
-        }
+		// Prevent duplicates
+		if (arr.some((item) => String(item.mvdbID) === String(tvseriesID))) {
+			return res.status(409).json({ message: "Already in MyList" });
+		}
 
-        // Add new item
-        const addedDate = secure.getCurrentDate();
-        arr.push({
-            mvdbID: tvseriesID,
-            status: "to_watch",
-            added: addedDate,
-            watched_status: 0,
-        });
+		// Add new item
+		const addedDate = secure.getCurrentDate();
+		arr.push({
+			mvdbID: tvseriesID,
+			status: "to_watch",
+			added: addedDate,
+			watched_status: 0,
+		});
 
-        if (rows.length > 0) {
-            // Update existing row
-            await db.query(
-                "UPDATE mylist SET tvseries = ? WHERE userID = ?",
-                [JSON.stringify(arr), userID]
-            );
-        } else {
-            // Insert new row
-            await db.query(
-                "INSERT INTO mylist (userID, movies, tvseries) VALUES (?, ?, ?)",
-                [userID, "[]", JSON.stringify(arr)]
-            );
-        }
+		if (rows.length > 0) {
+			// Update existing row
+			await db.query("UPDATE mylist SET tvseries = ? WHERE userID = ?", [
+				JSON.stringify(arr),
+				userID,
+			]);
+		} else {
+			// Insert new row
+			await db.query(
+				"INSERT INTO mylist (userID, movies, tvseries) VALUES (?, ?, ?)",
+				[userID, "[]", JSON.stringify(arr)]
+			);
+		}
 
-        res.status(201).json({ message: "TV Series added to mylist" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		res.status(201).json({ message: "TV Series added to mylist" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 app.post("/api/mylist/remove", async (req, res) => {
@@ -215,63 +221,63 @@ app.post("/api/mylist/remove", async (req, res) => {
 });
 
 app.post("/api/mylist/add", async (req, res) => {
-    const { userID, mvdbID, type } = req.body;
-    if (!userID || !mvdbID || !type) {
-        return res
-            .status(400)
-            .json({ message: "userID, mvdbID, and type are required" });
-    }
-    try {
-        // Get current list
-        const [rows] = await db.query(
-            `SELECT movies, tvseries FROM mylist WHERE userID = ?`,
-            [userID]
-        );
+	const { userID, mvdbID, type } = req.body;
+	if (!userID || !mvdbID || !type) {
+		return res
+			.status(400)
+			.json({ message: "userID, mvdbID, and type are required" });
+	}
+	try {
+		// Get current list
+		const [rows] = await db.query(
+			`SELECT movies, tvseries FROM mylist WHERE userID = ?`,
+			[userID]
+		);
 
-        let arr = [];
-        let isMovie = type === "movie";
-        if (rows.length > 0) {
-            try {
-                arr = JSON.parse(rows[0][isMovie ? "movies" : "tvseries"]);
-            } catch {
-                arr = [];
-            }
-        }
+		let arr = [];
+		let isMovie = type === "movie";
+		if (rows.length > 0) {
+			try {
+				arr = JSON.parse(rows[0][isMovie ? "movies" : "tvseries"]);
+			} catch {
+				arr = [];
+			}
+		}
 
-        // Prevent duplicates
-        if (arr.some((item) => String(item.mvdbID) === String(mvdbID))) {
-            return res.status(409).json({ message: "Already in MyList" });
-        }
+		// Prevent duplicates
+		if (arr.some((item) => String(item.mvdbID) === String(mvdbID))) {
+			return res.status(409).json({ message: "Already in MyList" });
+		}
 
-        // Add new item
-        const addedDate = secure.getCurrentDate();
-        arr.push({
-            mvdbID,
-            status: "to_watch",
-            added: addedDate,
-            watched_status: 0,
-        });
+		// Add new item
+		const addedDate = secure.getCurrentDate();
+		arr.push({
+			mvdbID,
+			status: "to_watch",
+			added: addedDate,
+			watched_status: 0,
+		});
 
-        if (rows.length > 0) {
-            // Update existing row
-            await db.query(
-                `UPDATE mylist SET ${isMovie ? "movies" : "tvseries"} = ? WHERE userID = ?`,
-                [JSON.stringify(arr), userID]
-            );
-        } else {
-            // Insert new row
-            const moviesArr = isMovie ? JSON.stringify(arr) : "[]";
-            const tvArr = !isMovie ? JSON.stringify(arr) : "[]";
-            await db.query(
-                "INSERT INTO mylist (userID, movies, tvseries) VALUES (?, ?, ?)",
-                [userID, moviesArr, tvArr]
-            );
-        }
+		if (rows.length > 0) {
+			// Update existing row
+			await db.query(
+				`UPDATE mylist SET ${isMovie ? "movies" : "tvseries"} = ? WHERE userID = ?`,
+				[JSON.stringify(arr), userID]
+			);
+		} else {
+			// Insert new row
+			const moviesArr = isMovie ? JSON.stringify(arr) : "[]";
+			const tvArr = !isMovie ? JSON.stringify(arr) : "[]";
+			await db.query(
+				"INSERT INTO mylist (userID, movies, tvseries) VALUES (?, ?, ?)",
+				[userID, moviesArr, tvArr]
+			);
+		}
 
-        res.status(201).json({ message: "Added to MyList" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		res.status(201).json({ message: "Added to MyList" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 app.post("/api/mylist/check", async (req, res) => {
@@ -335,10 +341,10 @@ app.post("/api/user/login", async (req, res) => {
 	}
 
 	try {
-		// Query the database for the user
+		// Query the database for the user, case-insensitive
 		const [rows] = await db.query(
-			"SELECT * FROM users WHERE username = ? AND password = ?",
-			[username, password]
+			"SELECT * FROM users WHERE LOWER(username) = ? AND LOWER(password) = ?",
+			[username.toLowerCase(), password.toLowerCase()]
 		);
 
 		if (rows.length > 0) {
@@ -349,7 +355,7 @@ app.post("/api/user/login", async (req, res) => {
 			// Insert the session into the database
 			await db.query(
 				"INSERT INTO sessions (identifier, until, userID) VALUES (?, ?, ?)",
-				[sessionId, lifetime, rows[0].userid] // Ensure the correct column name for user ID
+				[sessionId, lifetime, rows[0].userid]
 			);
 
 			// Set the session cookie
@@ -426,47 +432,47 @@ app.get("/api/user/getsession", async (req, res) => {
 
 // Get current logged-in user's profile
 app.get("/api/user/me", async (req, res) => {
-    const sessionId = req.cookies.session;
-    if (!sessionId) {
-        return res.status(401).json({ message: "api/user/me: No session found" });
-    }
+	const sessionId = req.cookies.session;
+	if (!sessionId) {
+		return res.status(401).json({ message: "api/user/me: No session found" });
+	}
 
-    try {
-        console.log("/api/user/me: sessionId", sessionId);
-        const [sessionRows] = await db.query(
-            "SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
-            [sessionId]
-        );
-        if (sessionRows.length === 0) {
-            return res.status(401).json({ message: "Session does not exist" });
-        }
-        const user = sessionRows[0];
+	try {
+		console.log("/api/user/me: sessionId", sessionId);
+		const [sessionRows] = await db.query(
+			"SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
+			[sessionId]
+		);
+		if (sessionRows.length === 0) {
+			return res.status(401).json({ message: "Session does not exist" });
+		}
+		const user = sessionRows[0];
 
-        const [badgesRows] = await db.query(
-            `SELECT b.name 
+		const [badgesRows] = await db.query(
+			`SELECT b.name 
              FROM user_badges ub 
              JOIN badges b ON ub.badge_id = b.id 
              WHERE ub.user_id = ?`,
-            [user.userid]
-        );
+			[user.userid]
+		);
 
-        const [achievementsRows] = await db.query(
-            `SELECT a.name
+		const [achievementsRows] = await db.query(
+			`SELECT a.name
              FROM user_achievements ua
              JOIN achievements a ON ua.achievement_id = a.id
              WHERE ua.user_id = ?`,
-            [user.userid]
-        );
+			[user.userid]
+		);
 
-        res.json({
-            username: user.username,
-            badges: badgesRows.map((b) => b.name),
-            achievements: achievementsRows.map((a) => a.name),
-        });
-    } catch (error) {
-        console.error("Error in /api/user/me:", error);
-        res.status(500).json({ error: error.message });
-    }
+		res.json({
+			username: user.username,
+			badges: badgesRows.map((b) => b.name),
+			achievements: achievementsRows.map((a) => a.name),
+		});
+	} catch (error) {
+		console.error("Error in /api/user/me:", error);
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Get user data
@@ -575,12 +581,14 @@ app.post("/api/user/achievements/top", async (req, res) => {
 
 // Get all achievements within the site
 app.get("/api/achievements/all", async (req, res) => {
-    try {
-        const [rows] = await db.query("SELECT id, name, description FROM achievements");
-        res.json(rows);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+	try {
+		const [rows] = await db.query(
+			"SELECT id, name, description FROM achievements"
+		);
+		res.json(rows);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Logout route
@@ -608,48 +616,48 @@ app.post("/api/user/logout", async (req, res) => {
 // ----------------------------------
 
 app.post("/api/setRating", async (req, res) => {
-    const { userID, mvdbID, type, rating } = req.body;
-    if (!userID || !mvdbID || !type || !rating) {
-        return res.status(400).json({ message: "Missing required fields" });
-    }
+	const { userID, mvdbID, type, genre, rating } = req.body;
+	if (!userID || !mvdbID || !type || !rating) {
+		return res.status(400).json({ message: "Missing required fields" });
+	}
 
-    // Validate session (optional: you can also check req.cookies.session)
-    // Save or update the rating in your database
-    try {
-        // Example: upsert into a ratings table
-        await db.query(
-            `INSERT INTO ratings (user_id, mvdb_id, type, rating)
+	// Validate session (optional: you can also check req.cookies.session)
+	// Save or update the rating in your database
+	try {
+		// Example: upsert into a ratings table
+		await db.query(
+			`INSERT INTO ratings (user_id, mvdb_id, type, rating)
              VALUES (?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE rating = ?`,
-            [userID, mvdbID, type, rating, rating]
-        );
-				rewarder.checkUserAchievementProgress(userID, mvdbID); // Check for possible rewards
-        res.status(200).json({ message: "Rating saved" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+			[userID, mvdbID, type, rating, rating]
+		);
+		rewarder.checkUserAchievementProgress(userID, mvdbID, type); // Check for possible rewards
+		res.status(200).json({ message: "Rating saved" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Get rating
 app.get("/api/getRating/:userID/:mvdbID/:type", async (req, res) => {
-		const { userID, mvdbID, type } = req.params;
-		if (!userID || !mvdbID || !type) {
-				return res.status(400).json({ message: "Missing required fields" });
-		}
+	const { userID, mvdbID, type } = req.params;
+	if (!userID || !mvdbID || !type) {
+		return res.status(400).json({ message: "Missing required fields" });
+	}
 
-		try {
-				const [rows] = await db.query(
-						`SELECT rating FROM ratings WHERE user_id = ? AND mvdb_id = ? AND type = ?`,
-						[userID, mvdbID, type]
-				);
-				if (rows.length > 0) {
-						res.status(200).json({ rating: rows[0].rating });
-				} else {
-						res.status(404).json({ message: "Rating not found" });
-				}
-		} catch (error) {
-				res.status(500).json({ error: error.message });
+	try {
+		const [rows] = await db.query(
+			`SELECT rating FROM ratings WHERE user_id = ? AND mvdb_id = ? AND type = ?`,
+			[userID, mvdbID, type]
+		);
+		if (rows.length > 0) {
+			res.status(200).json({ rating: rows[0].rating });
+		} else {
+			res.status(404).json({ message: "Rating not found" });
 		}
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Έναρξη του server

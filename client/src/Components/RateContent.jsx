@@ -84,6 +84,13 @@ export default function RateContent() {
                 setSubmitting(false);
                 return;
             }
+
+            // Extract genre IDs from the data
+            let genre = null;
+            if (data && data.genres && Array.isArray(data.genres)) {
+                genre = data.genres.map(g => g.id).join(","); // e.g. "28,12"
+            }
+
             const response = await fetch("http://localhost:5000/api/setRating", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -92,6 +99,7 @@ export default function RateContent() {
                     userID: session.userid,
                     mvdbID: id,
                     type,
+                    genre, // now included!
                     rating,
                 }),
             });
