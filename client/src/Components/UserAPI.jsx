@@ -194,3 +194,24 @@ export async function removeFromMyList(mvdbID, type) {
 		alert("Error removing from MyList.");
 	}
 }
+
+export async function getRecommendations(mvdbID, type) {
+    if (!mvdbID || !type) return [];
+    const apiKey = "b0812657fe4728b09b554c6593466d18";
+    let url = "";
+    if (type === "movie") {
+        url = `https://api.themoviedb.org/3/movie/${mvdbID}/recommendations?api_key=${apiKey}&language=en-US&page=1`;
+    } else if (type === "tvseries") {
+        url = `https://api.themoviedb.org/3/tv/${mvdbID}/recommendations?api_key=${apiKey}&language=en-US&page=1`;
+    } else {
+        return [];
+    }
+    try {
+        const res = await fetch(url);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return Array.isArray(data.results) ? data.results.slice(0, 5) : [];
+    } catch (e) {
+        return [];
+    }
+}
