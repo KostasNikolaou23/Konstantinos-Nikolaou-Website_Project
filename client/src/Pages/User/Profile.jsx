@@ -110,12 +110,12 @@ export default function Profile({ view_profile = false }) {
                                 </Col>
                                 <Col md={6}>
                                     <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
-                                        <Card.Title style={{ marginBottom: 0 }}>My Statistics | Number of clicks</Card.Title>
+                                        <Card.Title style={{ marginBottom: 0 }}>My Statistics</Card.Title>
                                     </div>
-                                    <div style={{ maxWidth: 600, minHeight: 350 }}>
+                                    <div style={{ width: "100%", minWidth: 0, paddingRight: 40 }}>
                                         <Bar
                                             data={{
-                                                labels: ['Movies', 'TV Series', 'Kids', 'Documentary'],
+                                                                                                labels: ['Movies', 'TV Series', 'Kids', 'Documentary'],
                                                 datasets: [
                                                     {
                                                         label: 'Clicks',
@@ -136,9 +136,15 @@ export default function Profile({ view_profile = false }) {
                                             }}
                                             options={{
                                                 responsive: true,
+                                                maintainAspectRatio: false,
                                                 plugins: {
                                                     legend: { display: false },
                                                     title: { display: false }
+                                                },
+                                                layout: {
+                                                    padding: {
+                                                        right: 40 // Add extra space to the right
+                                                    }
                                                 },
                                                 scales: {
                                                     y: {
@@ -151,7 +157,8 @@ export default function Profile({ view_profile = false }) {
                                                     }
                                                 }
                                             }}
-                                            height={350}
+                                            height={200}
+                                            width={440}
                                         />
                                     </div>
                                 </Col>
