@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const db = require("./db");
 const secure = require("./secure");
 const rewarder = require("./rewarder");
+const analytica = require("./analytica");
 const app = express();
 const PORT = process.env.PORT || 5000; // Διαφορετικό port από το 3000 της React
 
@@ -19,6 +20,9 @@ app.get("/play/genhash", async (req, res) => {
 });
 
 // Routes
+// --------------------------------
+// --------------------------------
+// General Data
 app.get("/api/data", async (req, res) => {
 	try {
 		const [rows] = await db.query("SELECT * FROM your_table");
@@ -27,6 +31,106 @@ app.get("/api/data", async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 });
+
+// Analytics/Statistics
+// --------------------------------
+app.get("/api/analytics/top5movies", async (req, res) => {
+	try {
+		const [rows] = await analytica.getTop5Movies();
+		res.json(rows);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.get("/api/analytics/top5tvseries", async (req, res) => {
+	try {
+		const [rows] = await analytica.getTop5TvSeries();
+		res.json(rows);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.get("/api/analytics/user/:userId", async (req, res) => {
+	const userId = req.params.userId;
+	if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
+
+	try {
+		const [movieClicks] = await analytica.getUserMovieClicks(userId);
+		const [tvSeriesClicks] = await analytica.getUserTvSeriesClicks(userId);
+		const [kidsClicks] = await analytica.getUserKidsClicks(userId);
+		const [documentaryClicks] = await analytica.getUserDocumentaryClicks(userId);
+
+		res.json({
+			movie_clicks: movieClicks[0].movie_clicks,
+			tv_series_clicks: tvSeriesClicks[0].tv_series_clicks,
+			kids_clicks: kidsClicks[0].kids_clicks,
+			documentary_clicks: documentaryClicks[0].documentary_clicks,
+		});
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/analytics/movies/:userId", async (req, res) => {
+	const userId = req.params.userId;
+	if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
+
+	try {
+		await setUserMovieClicks(userId);
+		res.json({ message: "Movie clicks incremented" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/analytics/tvseries/:userId", async (req, res) => {
+	const userId = req.params.userId;
+	if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
+
+	try {
+		await setUserTvSeriesClicks(userId);
+		res.json({ message: "TV Series clicks incremented" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/analytics/kids/:userId", async (req, res) => {
+	const userId = req.params.userId;
+	if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
+
+	try {
+		await setUserKidsClicks(userId);
+		res.json({ message: "Kids clicks incremented" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+app.post("/api/analytics/documentary/:userId", async (req, res) => {
+	const userId = req.params.userId;
+	if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
+
+	try {
+		await setUserDocumentaryClicks(userId);
+		res.json({ message: "Documentary clicks incremented" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 
 // MyList APIs
 // ----------------------------------
@@ -664,3 +768,39 @@ app.get("/api/getRating/:userID/:mvdbID/:type", async (req, res) => {
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
+
+async function setUserMovieClicks(userId) {
+    const [user] = await db.query("SELECT * FROM statistics WHERE user_id = ?", [userId]);
+    if (user.length === 0) {
+        return db.query("INSERT INTO statistics (user_id, movie_clicks, tv_series_clicks, kids_clicks, documentary_clicks) VALUES (?, 1, 0, 0, 0)", [userId]);
+    } else {
+        return db.query("UPDATE statistics SET movie_clicks = movie_clicks + 1 WHERE user_id = ?", [userId]);
+    }
+}
+
+async function setUserTvSeriesClicks(userId) {
+    const [user] = await db.query("SELECT * FROM statistics WHERE user_id = ?", [userId]);
+    if (user.length === 0) {
+        return db.query("INSERT INTO statistics (user_id, movie_clicks, tv_series_clicks, kids_clicks, documentary_clicks) VALUES (?, 0, 1, 0, 0)", [userId]);
+    } else {
+        return db.query("UPDATE statistics SET tv_series_clicks = tv_series_clicks + 1 WHERE user_id = ?", [userId]);
+    }
+}
+
+async function setUserKidsClicks(userId) {
+    const [user] = await db.query("SELECT * FROM statistics WHERE user_id = ?", [userId]);
+    if (user.length === 0) {
+        return db.query("INSERT INTO statistics (user_id, movie_clicks, tv_series_clicks, kids_clicks, documentary_clicks) VALUES (?, 0, 0, 1, 0)", [userId]);
+    } else {
+        return db.query("UPDATE statistics SET kids_clicks = kids_clicks + 1 WHERE user_id = ?", [userId]);
+    }
+}
+
+async function setUserDocumentaryClicks(userId) {
+    const [user] = await db.query("SELECT * FROM statistics WHERE user_id = ?", [userId]);
+    if (user.length === 0) {
+        return db.query("INSERT INTO statistics (user_id, movie_clicks, tv_series_clicks, kids_clicks, documentary_clicks) VALUES (?, 0, 0, 0, 1)", [userId]);
+    } else {
+        return db.query("UPDATE statistics SET documentary_clicks = documentary_clicks + 1 WHERE user_id = ?", [userId]);
+    }
+}
