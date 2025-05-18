@@ -32,7 +32,6 @@ const jamesbond_movies = [
 // Achievement Functions
 // Watch 10 James Bond movies
 async function jamesbondRewarder(userId) {
-
 	// Query for ratings
 	const placeholders = jamesbond_movies.map(() => "?").join(",");
 	const sql = `
@@ -48,40 +47,47 @@ async function jamesbondRewarder(userId) {
 		const [rows] = await db.query(sql, params);
 		const count = rows[0].count;
 
-		if (count >= 10) {
-			// Check if achievement already exists
-			const [achRows] = await db.query(
-				"SELECT * FROM user_achievements WHERE user_id = ? AND achievement_id = 2",
-				[userId]
-			);
+		// Fetch the goal from the achievements table
+		const [achievementRows] = await db.query(
+			"SELECT goal FROM achievements WHERE id = 2"
+		);
 
-			if (achRows.length === 0) {
-				// Insert achievement
-				await db.query(
-					"INSERT INTO user_achievements (user_id, achievement_id) VALUES (?, ?)",
-					[userId, 2]
+		if (achievementRows.length > 0) {
+			const requiredCount = achievementRows[0].goal;
+
+			if (count >= requiredCount) {
+				// Check if achievement already exists
+				const [achRows] = await db.query(
+					"SELECT * FROM user_achievements WHERE user_id = ? AND achievement_id = 2",
+					[userId]
 				);
-				console.log(`Achievement 2 awarded to user ${userId}`);
+
+				if (achRows.length === 0) {
+					// Insert achievement
+					await db.query(
+						"INSERT INTO user_achievements (user_id, achievement_id) VALUES (?, ?)",
+						[userId, 2]
+					);
+					console.log(`Achievement 2 awarded to user ${userId}`);
+				}
+			} else {
+				console.log(`User ${userId} has watched ${count} James Bond movies.`);
 			}
-		}
-		else {
-			console.log(`User ${userId} has watched ${count} James Bond movies.`);
 		}
 	} catch (error) {
 		console.error("Error in jamesbondRewarder:", error);
 	}
 }
 
-
 // General function to check user achievement progress
 async function checkUserAchievementProgress(userId, mvdbID) {
-    console.log(`Checking user ${userId} for movie ID ${mvdbID}`);
+	console.log(`Checking user ${userId} for movie ID ${mvdbID}`);
 
-    const numericMvdbID = Number(mvdbID);
-    if (jamesbond_movies.includes(numericMvdbID)) {
-        await jamesbondRewarder(userId);
-        console.log(`User ${userId} has watched a James Bond movie: ${mvdbID}`);
-    }
+	const numericMvdbID = Number(mvdbID);
+	if (jamesbond_movies.includes(numericMvdbID)) {
+		await jamesbondRewarder(userId);
+		console.log(`User ${userId} has watched a James Bond movie: ${mvdbID}`);
+	}
 }
 
 module.exports = {
