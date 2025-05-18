@@ -13,20 +13,18 @@ function getTop5TvSeries() {
 // User stuff
 // ------------------------------------------------------
 
-function getUserMovieClicks(userId) {
-	return db.query("SELECT movie_clicks FROM statistics WHERE user_id = ?", [userId]);
+// Returns [{ movie_clicks: number }]
+async function getUserMovieClicks(userId) {
+    return db.query("SELECT movie_clicks FROM statistics WHERE user_id = ?", [userId]);
 }
-
-function getUserTvSeriesClicks(userId) {
-	return db.query("SELECT tv_series_clicks FROM statistics WHERE user_id = ?", [userId]);
+async function getUserTvSeriesClicks(userId) {
+    return db.query("SELECT tv_series_clicks FROM statistics WHERE user_id = ?", [userId]);
 }
-
-function getUserKidsClicks(userId) {
-	return db.query("SELECT kids_clicks FROM statistics WHERE user_id = ?", [userId]);
+async function getUserKidsClicks(userId) {
+    return db.query("SELECT kids_clicks FROM statistics WHERE user_id = ?", [userId]);
 }
-
-function getUserDocumentaryClicks(userId) {
-	return db.query("SELECT documentary_clicks FROM statistics WHERE user_id = ?", [userId]);
+async function getUserDocumentaryClicks(userId) {
+    return db.query("SELECT documentary_clicks FROM statistics WHERE user_id = ?", [userId]);
 }
 
 async function setUserMovieClicks(userId) {
@@ -120,4 +118,8 @@ module.exports = {
 	setUserTvSeriesClicks,
 	setUserDocumentaryClicks,
 	setUserKidsClicks,
+	getUserMovieClicks,
+	getUserTvSeriesClicks,
+	getUserKidsClicks,
+	getUserDocumentaryClicks,
 };
