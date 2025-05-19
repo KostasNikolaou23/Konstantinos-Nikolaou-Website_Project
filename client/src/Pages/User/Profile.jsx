@@ -151,7 +151,7 @@ export default function Profile({ view_profile = false }) {
                                                 scales: {
                                                     y: {
                                                         beginAtZero: true,
-                                                        max: 10,
+                                                        max: 20,
                                                         ticks: {
                                                             stepSize: 1
                                                         }
