@@ -87,7 +87,12 @@ export function Leaderboard() {
 											style={{ color: "#b36205", marginRight: "8px", fontSize: "1.2em" }}
 										></i>
 									)}
-									<span>{user.username}</span>
+									<a
+										href={`/user/view/${user.username}`}
+										style={{ textDecoration: "none", color: "inherit" }}
+									>
+										<span>{user.username}</span>
+									</a>
 								</div>
 							</td>
 							<td className={index <= 2 ? "table-active" : ""}>
