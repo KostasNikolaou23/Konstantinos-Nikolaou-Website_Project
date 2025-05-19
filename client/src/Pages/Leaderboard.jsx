@@ -89,14 +89,24 @@ export function Leaderboard() {
 									)}
 									<a
 										href={`/user/view/${user.username}`}
-										style={{ textDecoration: "none", color: "inherit" }}
+										style={{ 
+											textDecoration: "none", 
+											color: index === 0 ? "#ffd803" : index === 1 ? "#aaa9a7" : index === 2 ? "#b36205" : "inherit" 
+										}}
 									>
 										<span>{user.username}</span>
 									</a>
 								</div>
 							</td>
 							<td className={index <= 2 ? "table-active" : ""}>
-								<div style={{ textAlign: "center" }}>{user.achievement_count}</div>
+								<div 
+									style={{ 
+										textAlign: "center",
+										color: index === 0 ? "#ffd803" : index === 1 ? "#aaa9a7" : index === 2 ? "#b36205" : "inherit"
+									}}
+								>
+									{user.achievement_count}
+								</div>
 							</td>
 						</tr>
 					))}
