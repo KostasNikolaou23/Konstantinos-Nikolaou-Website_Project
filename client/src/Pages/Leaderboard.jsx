@@ -60,7 +60,14 @@ export function Leaderboard() {
 				<tbody>
 					{leaderboard.map((user, index) => (
 						<tr key={user.userid}>
-							<td className={index <= 2 ? "table-active" : ""}>{index + 1}</td>
+							<td className={index <= 2 ? "table-active" : ""}>
+								<div style={{ 
+									color: index === 0 ? "#ffd803" : index === 1 ? "#aaa9a7" : index === 2 ? "#b36205" : "inherit",
+									fontWeight: index <= 2 ? "bold" : "normal"
+								}}>
+									{index + 1}
+								</div>
+							</td>
 							<td className={index <= 2 ? "table-active" : ""}>
 								<div
 									style={{
