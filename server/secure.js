@@ -1,10 +1,21 @@
-function generateRandomHash(length = 128) {
+var crypto = require('crypto');
+
+// Either get salt from environment variable or use default (not recommended in production)
+var systemSalt = process.env.SALT || 'default_salt';
+
+function generateRandomSessionHash(length = 128) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return result;
+}
+
+function generateDataHash(data) {
+    const hash = crypto.createHash('sha256');
+    hash.update(data + systemSalt);
+    return hash.digest('hex');
 }
 
 function getCurrentUnixTime() {
@@ -24,7 +35,8 @@ function getUnixSessionLifetime(time=3600) {
 
 // Export the functions
 module.exports = {
-    generateRandomHash,
+    generateRandomSessionHash,
+    generateDataHash,
     getUnixSessionLifetime,
     getCurrentUnixTime,
     getCurrentDate,

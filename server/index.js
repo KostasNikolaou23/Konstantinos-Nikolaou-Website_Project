@@ -14,8 +14,20 @@ app.use(express.json());
 app.use(cookieParser()); // Add this line to parse cookies
 
 // API Playground
-app.get("/play/genhash", async (req, res) => {
-	var generatedHash = secure.generateRandomHash();
+app.get("/play/hash/gensession", async (req, res) => {
+	var generatedHash = secure.generateRandomSessionHash();
+	res.json({ hash: generatedHash });
+});
+
+// api/hash/gendata where it takes a string and returns the hash from secure's generateDataHash
+app.get("/play/hash/gendata", async (req, res) => {
+	const data = req.query.data;
+	if (!data || typeof data !== "string") {
+		return res
+			.status(400)
+			.json({ message: "Data is required and must be a string" });
+	}
+	var generatedHash = secure.generateDataHash(data);
 	res.json({ hash: generatedHash });
 });
 
@@ -76,59 +88,59 @@ app.get("/api/analytics/user/:userId", async (req, res) => {
 });
 
 app.post("/api/analytics/movies/:userId", async (req, res) => {
-    const userId = req.params.userId;
-    if (!userId) {
-        return res.status(400).json({ message: "User ID is required" });
-    }
+	const userId = req.params.userId;
+	if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
 
-    try {
-        await analytica.setUserMovieClicks(userId);
-        res.json({ message: "Movie clicks incremented" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+	try {
+		await analytica.setUserMovieClicks(userId);
+		res.json({ message: "Movie clicks incremented" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 app.post("/api/analytics/tvseries/:userId", async (req, res) => {
-    const userId = req.params.userId;
-    if (!userId) {
-        return res.status(400).json({ message: "User ID is required" });
-    }
+	const userId = req.params.userId;
+	if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
 
-    try {
-        await analytica.setUserTvSeriesClicks(userId);
-        res.json({ message: "TV Series clicks incremented" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+	try {
+		await analytica.setUserTvSeriesClicks(userId);
+		res.json({ message: "TV Series clicks incremented" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 app.post("/api/analytics/kids/:userId", async (req, res) => {
-    const userId = req.params.userId;
-    if (!userId) {
-        return res.status(400).json({ message: "User ID is required" });
-    }
+	const userId = req.params.userId;
+	if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
 
-    try {
-        await analytica.setUserKidsClicks(userId);
-        res.json({ message: "Kids clicks incremented" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+	try {
+		await analytica.setUserKidsClicks(userId);
+		res.json({ message: "Kids clicks incremented" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 app.post("/api/analytics/documentary/:userId", async (req, res) => {
-    const userId = req.params.userId;
-    if (!userId) {
-        return res.status(400).json({ message: "User ID is required" });
-    }
+	const userId = req.params.userId;
+	if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	}
 
-    try {
-        await analytica.setUserDocumentaryClicks(userId);
-        res.json({ message: "Documentary clicks incremented" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+	try {
+		await analytica.setUserDocumentaryClicks(userId);
+		res.json({ message: "Documentary clicks incremented" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // MyList APIs
@@ -423,10 +435,12 @@ app.post("/api/user/register", async (req, res) => {
 	}
 
 	try {
-		// Corrected SQL query
+		// Hash the password before storing
+		const hashedPassword = secure.generateDataHash(password);
+
 		const [result] = await db.query(
 			"INSERT INTO users (email, username, password) VALUES (?, ?, ?)",
-			[email, username, password]
+			[email, username, hashedPassword]
 		);
 		res.status(201).json({ id: result.insertId });
 	} catch (error) {
@@ -444,15 +458,18 @@ app.post("/api/user/login", async (req, res) => {
 	}
 
 	try {
-		// Query the database for the user, case-insensitive
+		// Hash the password before comparing
+		const hashedPassword = secure.generateDataHash(password);
+
+		// Query the database for the user, case-insensitive username
 		const [rows] = await db.query(
-			"SELECT * FROM users WHERE LOWER(username) = ? AND LOWER(password) = ?",
-			[username.toLowerCase(), password.toLowerCase()]
+			"SELECT * FROM users WHERE LOWER(username) = ? AND password = ?",
+			[username.toLowerCase(), hashedPassword]
 		);
 
 		if (rows.length > 0) {
 			// Generate session ID and expiration time
-			var sessionId = secure.generateRandomHash();
+			var sessionId = secure.generateRandomSessionHash();
 			var lifetime = secure.getUnixSessionLifetime(3600);
 
 			// Insert the session into the database
@@ -535,114 +552,130 @@ app.get("/api/user/getsession", async (req, res) => {
 
 // Get current logged-in user's profile
 app.get("/api/user/me", async (req, res) => {
-    const sessionId = req.cookies.session;
-    if (!sessionId) {
-        return res.status(401).json({ message: "api/user/me: No session found" });
-    }
+	const sessionId = req.cookies.session;
+	if (!sessionId) {
+		return res.status(401).json({ message: "api/user/me: No session found" });
+	}
 
-    try {
-        const [sessionRows] = await db.query(
-            "SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
-            [sessionId]
-        );
-        if (sessionRows.length === 0) {
-            return res.status(401).json({ message: "Session does not exist" });
-        }
-        const user = sessionRows[0];
+	try {
+		const [sessionRows] = await db.query(
+			"SELECT u.userid, u.username FROM sessions s JOIN users u ON s.userID = u.userid WHERE s.identifier = ?",
+			[sessionId]
+		);
+		if (sessionRows.length === 0) {
+			return res.status(401).json({ message: "Session does not exist" });
+		}
+		const user = sessionRows[0];
 
-        const [badgesRows] = await db.query(
-            `SELECT b.name 
+		const [badgesRows] = await db.query(
+			`SELECT b.name 
              FROM user_badges ub 
              JOIN badges b ON ub.badge_id = b.id 
              WHERE ub.user_id = ?`,
-            [user.userid]
-        );
+			[user.userid]
+		);
 
-        const [achievementsRows] = await db.query(
-            `SELECT a.name
+		const [achievementsRows] = await db.query(
+			`SELECT a.name
              FROM user_achievements ua
              JOIN achievements a ON ua.achievement_id = a.id
              WHERE ua.user_id = ?`,
-            [user.userid]
-        );
+			[user.userid]
+		);
 
-        // --- Get statistics using analytica.js ---
-        const stats = {
-            movie_clicks: await analytica.getUserMovieClicks(user.userid),
-            tv_series_clicks: await analytica.getUserTvSeriesClicks(user.userid),
-            kids_clicks: await analytica.getUserKidsClicks(user.userid),
-            documentary_clicks: await analytica.getUserDocumentaryClicks(user.userid),
-        };
+		// --- Get statistics using analytica.js ---
+		const stats = {
+			movie_clicks: await analytica.getUserMovieClicks(user.userid),
+			tv_series_clicks: await analytica.getUserTvSeriesClicks(user.userid),
+			kids_clicks: await analytica.getUserKidsClicks(user.userid),
+			documentary_clicks: await analytica.getUserDocumentaryClicks(user.userid),
+		};
 
-        res.json({
-            username: user.username,
-            badges: badgesRows.map((b) => b.name),
-            achievements: achievementsRows.map((a) => a.name),
-            stats, // <-- send stats to frontend
-        });
-    } catch (error) {
-        console.error("Error in /api/user/me:", error);
-        res.status(500).json({ error: error.message });
-    }
+		res.json({
+			username: user.username,
+			badges: badgesRows.map((b) => b.name),
+			achievements: achievementsRows.map((a) => a.name),
+			stats, // <-- send stats to frontend
+		});
+	} catch (error) {
+		console.error("Error in /api/user/me:", error);
+		res.status(500).json({ error: error.message });
+	}
 });
 
 app.get("/api/user/profile/:username", async (req, res) => {
-    const username = req.params.username;
-    if (!username) {
-        return res.status(400).json({ message: "Username is required" });
-    }
+	const username = req.params.username;
+	if (!username) {
+		return res.status(400).json({ message: "Username is required" });
+	}
 
-    try {
-        // Get user info
-        const [userRows] = await db.query(
-            "SELECT userid, username FROM users WHERE username = ?",
-            [username]
-        );
-        if (userRows.length === 0) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        const user = userRows[0];
+	try {
+		// Get user info
+		const [userRows] = await db.query(
+			"SELECT userid, username FROM users WHERE username = ?",
+			[username]
+		);
+		if (userRows.length === 0) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		const user = userRows[0];
 
-        // Get badges
-        const [badgesRows] = await db.query(
-            `SELECT b.name 
+		// Get badges
+		const [badgesRows] = await db.query(
+			`SELECT b.name 
              FROM user_badges ub 
              JOIN badges b ON ub.badge_id = b.id 
              WHERE ub.user_id = ?`,
-            [user.userid]
-        );
+			[user.userid]
+		);
 
-        // Get achievements
-        const [achievementsRows] = await db.query(
-            `SELECT a.name
+		// Get achievements
+		const [achievementsRows] = await db.query(
+			`SELECT a.name
              FROM user_achievements ua
              JOIN achievements a ON ua.achievement_id = a.id
              WHERE ua.user_id = ?`,
-            [user.userid]
-        );
+			[user.userid]
+		);
 
-        // Get statistics
-        const movieClicksArr = await analytica.getUserMovieClicks(user.userid);
-        const tvSeriesClicksArr = await analytica.getUserTvSeriesClicks(user.userid);
-        const kidsClicksArr = await analytica.getUserKidsClicks(user.userid);
-        const documentaryClicksArr = await analytica.getUserDocumentaryClicks(user.userid);
+		// Get statistics
+		const movieClicksArr = await analytica.getUserMovieClicks(user.userid);
+		const tvSeriesClicksArr = await analytica.getUserTvSeriesClicks(user.userid);
+		const kidsClicksArr = await analytica.getUserKidsClicks(user.userid);
+		const documentaryClicksArr = await analytica.getUserDocumentaryClicks(
+			user.userid
+		);
 
-        const stats = {
-            movie_clicks: Array.isArray(movieClicksArr) && movieClicksArr[0]?.movie_clicks != null ? movieClicksArr[0].movie_clicks : 0,
-            tv_series_clicks: Array.isArray(tvSeriesClicksArr) && tvSeriesClicksArr[0]?.tv_series_clicks != null ? tvSeriesClicksArr[0].tv_series_clicks : 0,
-            kids_clicks: Array.isArray(kidsClicksArr) && kidsClicksArr[0]?.kids_clicks != null ? kidsClicksArr[0].kids_clicks : 0,
-            documentary_clicks: Array.isArray(documentaryClicksArr) && documentaryClicksArr[0]?.documentary_clicks != null ? documentaryClicksArr[0].documentary_clicks : 0,
-        };
+		const stats = {
+			movie_clicks:
+				Array.isArray(movieClicksArr) && movieClicksArr[0]?.movie_clicks != null
+					? movieClicksArr[0].movie_clicks
+					: 0,
+			tv_series_clicks:
+				Array.isArray(tvSeriesClicksArr) &&
+				tvSeriesClicksArr[0]?.tv_series_clicks != null
+					? tvSeriesClicksArr[0].tv_series_clicks
+					: 0,
+			kids_clicks:
+				Array.isArray(kidsClicksArr) && kidsClicksArr[0]?.kids_clicks != null
+					? kidsClicksArr[0].kids_clicks
+					: 0,
+			documentary_clicks:
+				Array.isArray(documentaryClicksArr) &&
+				documentaryClicksArr[0]?.documentary_clicks != null
+					? documentaryClicksArr[0].documentary_clicks
+					: 0,
+		};
 
-        res.json({
-            username: user.username,
-            badges: badgesRows.map((b) => b.name),
-            achievements: achievementsRows.map((a) => a.name),
-            stats,
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+		res.json({
+			username: user.username,
+			badges: badgesRows.map((b) => b.name),
+			achievements: achievementsRows.map((a) => a.name),
+			stats,
+		});
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 });
 
 // Get user data
