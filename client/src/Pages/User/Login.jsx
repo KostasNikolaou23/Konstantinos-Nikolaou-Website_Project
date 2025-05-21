@@ -63,6 +63,13 @@ export function Login() {
                     />
                 </Form.Group>
 
+                <div style={{ marginTop: "1rem" }}>
+                    Forgot your password?{" "}
+                    <a href="/user/forgotpassword">Reset it here!</a>
+                </div>
+
+                <br />
+
                 <Button variant="primary" type="submit">
                     Submit
                 </Button>

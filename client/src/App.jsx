@@ -27,6 +27,7 @@ import RateContent from "./Components/RateContent";
 // Account Functionality
 import Login from "./Pages/User/Login";
 import Register from "./Pages/User/Register";
+import ForgotPassword from "./Pages/User/ForgotPassword";
 import Track from "./Pages/User/Track";
 import MyList from "./Pages/User/MyList";
 import Profile from "./Pages/User/Profile";
@@ -47,6 +48,7 @@ function App() {
 						<Route path="/user/track" element={<Track />} />
 						<Route path="/user/mylist" element={<MyList />} />
 						<Route path="/user/profile" element={<Profile view_profile={true} />} />
+						<Route path="/user/forgotpassword" element={<ForgotPassword />} />
 						<Route path="/user/logout" element={<div>Logout</div>} />
 						<Route
 							path="/user/view/:username"
