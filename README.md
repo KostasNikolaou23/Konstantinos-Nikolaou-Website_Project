@@ -10,8 +10,10 @@ Frontend:
 		- Javascript: React.js, Node.js
 		- css
 		- html
+<br>
 Backend:
 		- Javascript: Express.js
+<br>
 Database:
 		- MySQL and MariaDB
 
