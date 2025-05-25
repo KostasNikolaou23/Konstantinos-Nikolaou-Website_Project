@@ -644,31 +644,6 @@ app.get("/api/user/profile/:username", async (req, res) => {
 	}
 });
 
-// Get user data
-app.get("/api/user/get/:username", async (req, res) => {
-	const username = req.params.username;
-
-	// Validate input
-	if (!username) {
-		return res.status(400).json({ message: "Username is required" });
-	}
-
-	try {
-		const [rows] = await db.query(
-			"SELECT joined, userid FROM users WHERE username = ?",
-			[username]
-		);
-
-		if (rows.length === 0) {
-			return res.status(404).json({ message: "User not found" });
-		}
-
-		res.json(rows[0]);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
-});
-
 // Achievements API
 // ----------------------------------
 // Get achievements of user
