@@ -31,19 +31,6 @@ app.get("/play/hash/gendata", async (req, res) => {
 	res.json({ hash: generatedHash });
 });
 
-// Routes
-// --------------------------------
-// --------------------------------
-// General Data
-app.get("/api/data", async (req, res) => {
-	try {
-		const [rows] = await db.query("SELECT * FROM your_table");
-		res.json(rows);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
-});
-
 // Analytics/Statistics
 // --------------------------------
 app.get("/api/analytics/top5movies", async (req, res) => {
