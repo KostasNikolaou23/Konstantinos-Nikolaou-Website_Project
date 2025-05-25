@@ -321,6 +321,15 @@ app.post("/api/user/register", async (req, res) => {
 	}
 
 	try {
+		// Check if username already exists (case-insensitive)
+		const [existing] = await db.query(
+			"SELECT userid FROM users WHERE LOWER(username) = ?",
+			[username.toLowerCase()]
+		);
+		if (existing.length > 0) {
+			return res.status(409).json({ message: "Username already exists" });
+		}
+
 		// Hash the password before storing
 		const hashedPassword = secure.generateDataHash(password);
 
