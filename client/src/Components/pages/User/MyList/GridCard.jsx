@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addMyList, removeFromMyList, isInMyList, getSession } from "../../../UserAPI";
 import Stack from "react-bootstrap/Stack";
@@ -63,6 +63,7 @@ export function GridCard({
                 <Stack gap={3}>
                     Added: {added} <br />
                 </Stack>
+                
                 {/* Pushes the button row to the bottom */}
                 <div style={{ marginTop: "auto" }}>
                     <div className="d-flex justify-content-between align-items-center">

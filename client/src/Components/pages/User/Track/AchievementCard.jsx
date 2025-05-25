@@ -1,8 +1,5 @@
-import React from "react";
-import ProgressBar from "react-bootstrap/ProgressBar";
 import Stack from 'react-bootstrap/Stack';
 import Card from 'react-bootstrap/Card';
-
 
 export function AchievementCard({
 	name,
@@ -11,7 +8,6 @@ export function AchievementCard({
 	return (
 		<Card>
 			<div className="card">
-				{/* <img src={poster} alt={name} className="card-image" /> */}
 				<div className="card-content">
 					<center>
 					<b><h2 class="card-seriesname">{name}</h2></b>
@@ -23,7 +19,6 @@ export function AchievementCard({
 							{description}
 						</Card.Body>
 
-						{/* Something to indicate completion */}
 					</Stack>
 					</center>	
 				</div>

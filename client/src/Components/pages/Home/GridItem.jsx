@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { addMyList, removeFromMyList, isInMyList, getSession } from "../../UserAPI";
-import { useNavigate } from "react-router-dom"; // <-- import this
+import { useNavigate } from "react-router-dom";
 
 export function GridItem({
   cardName,
@@ -11,7 +11,7 @@ export function GridItem({
   mvdbID,
   type = "movie", // or "tvseries"
 }) {
-  const navigate = useNavigate(); // <-- use this
+  const navigate = useNavigate();
   const [inMyList, setInMyList] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);

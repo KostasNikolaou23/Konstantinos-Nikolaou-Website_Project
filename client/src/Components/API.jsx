@@ -15,7 +15,6 @@ const options = {
 
 fetch(url, options)
 	.then((res) => res.json())
-	// .then(json => console.log(json))
 	.catch((err) => console.error(err));
 
 /**
@@ -52,7 +51,7 @@ async function getSearchResults(
 		}
 
 		const data = await response.json();
-		// Only return movies and tv series
+		
 		console.log(data);
 		return data.results.filter(
 			(item) => item.media_type === "movie" || item.media_type === "tv"
@@ -89,8 +88,8 @@ async function getMovieDetails(movie_id) {
 		}
 
 		const data = await response.json();
-		// console.log(data); // Log the full response to verify the structure
-		return data; // Return the full movie details object
+		return data;
+
 	} catch (error) {
 		console.error("Error fetching movie details:", error);
 		throw error;
@@ -116,8 +115,7 @@ async function getTVDetails(tv_id) {
 		}
 
 		const data = await response.json();
-		// console.log(data); // Log the full response to verify the structure
-		return data; // Return the full TV details object
+		return data;
 	} catch (error) {
 		console.error("Error fetching TV details:", error);
 		throw error;
@@ -125,7 +123,7 @@ async function getTVDetails(tv_id) {
 }
 
 // Images
-
+// ------------------------------------
 async function getImages(
 	type,
 	id,
@@ -165,7 +163,7 @@ async function getImages(
 		if (!response.ok) {
 			if (response.status === 404) {
 				console.warn(`Resource not found for ID: ${id}`);
-				return null; // Return null for 404 errors
+				return null;
 			}
 			const errorBody = await response.text();
 			console.error(`Error response body: ${errorBody}`);
@@ -204,7 +202,7 @@ async function getTrendingContent(type = "movies", limit = 10) {
 	}
 
 	const params = new URLSearchParams({
-		api_key: apiKey, // Use your API key
+		api_key: apiKey,
 	});
 
 	try {
@@ -247,7 +245,7 @@ async function discoverContent(type, genre_ids, limit = 10) {
 	}
 
 	const params = new URLSearchParams({
-		api_key: apiKey, // Use your API key
+		api_key: apiKey,
 	});
 
 	try {
@@ -290,7 +288,6 @@ async function getMovieWatchProviders(movie_id) {
         }
         const data = await response.json();
 				console.log("Watch Providers for Movie:", data.results.GR);
-        // Return only the GR (Greece) providers object, or null if not found
         return data.results && data.results.GR ? data.results.GR : null;
     } catch (error) {
         console.error("Error fetching movie watch providers:", error);
@@ -317,7 +314,6 @@ async function getTVWatchProviders(tv_id) {
             throw new Error(`Error fetching TV watch providers: ${response.statusText}`);
         }
         const data = await response.json();
-        // Return only the GR (Greece) providers object, or null if not found
         return data.results && data.results.GR ? data.results.GR : null;
     } catch (error) {
         console.error("Error fetching TV watch providers:", error);
@@ -333,6 +329,6 @@ module.exports = {
 	getImages,
 	getTrendingContent,
 	discoverContent,
-	getMovieWatchProviders, // <-- export
-	getTVWatchProviders,    // <-- export
+	getMovieWatchProviders,
+	getTVWatchProviders,
 };

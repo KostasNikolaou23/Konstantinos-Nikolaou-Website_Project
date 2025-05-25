@@ -425,6 +425,7 @@ app.post("/api/mylist/check", async (req, res) => {
 
 // User APIs
 // ----------------------------------
+
 // Register
 app.post("/api/user/register", async (req, res) => {
 	const { email, username, password } = req.body;
@@ -755,12 +756,6 @@ app.post("/api/achievements/set", async (req, res) => {
 });
 
 // Get top 50 users with most achievements
-// SELECT u.userid, u.username, COUNT(ua.achievement_id) AS achievement_count
-// FROM users u
-// LEFT JOIN user_achievements ua ON u.userid = ua.user_id
-// GROUP BY u.userid, u.username
-// ORDER BY achievement_count DESC
-// LIMIT 50;
 app.post("/api/user/achievements/top", async (req, res) => {
 	// Validate input
 	if (!req.body) {
@@ -827,7 +822,6 @@ app.post("/api/setRating", async (req, res) => {
 	// Validate session (optional: you can also check req.cookies.session)
 	// Save or update the rating in your database
 	try {
-		// Example: upsert into a ratings table
 		await db.query(
 			`INSERT INTO ratings (user_id, mvdb_id, type, rating)
              VALUES (?, ?, ?, ?)

@@ -9,6 +9,7 @@ import defaultPicture from "../../Components/pages/User/Profile/default-user.jpg
 import { fetchUserProfile } from "../../Components/UserAPI";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function Profile({ view_profile = false }) {
@@ -37,8 +38,8 @@ export default function Profile({ view_profile = false }) {
     }, [view_profile, username]);
 
     // Debug
-    console.log("userData:", userData);
-    console.log("userData?.stats:", userData?.stats);
+    // console.log("userData:", userData);
+    // console.log("userData?.stats:", userData?.stats);
 
     return (
         <Container style={{ marginTop: "2rem" }}>

@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-import { getTrendingContent } from "../Components/API";
 import ContentCategorySelector from "../Components/pages/ContentCategorySelector";
 
 function Home() {

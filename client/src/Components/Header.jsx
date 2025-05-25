@@ -1,21 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
-import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Navbar from "react-bootstrap/Navbar";
 import Dropdown from "react-bootstrap/Dropdown";
-import { getSession, logout } from "../Components/UserAPI"; // Import getSession
-import { getSearchResults } from "./API"; // Correct relative path
+import { getSession, logout } from "../Components/UserAPI";
+import { getSearchResults } from "./API";
 import { useNavigate } from "react-router-dom";
 
 function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [searchOpen, setSearchOpen] = useState(false);
-	const [searchText, setSearchText] = useState(""); // State to store search input
-	const [searchResults, setSearchResults] = useState([]); // State to store search results
+	const [searchText, setSearchText] = useState("");
+	const [searchResults, setSearchResults] = useState([]);
 
-	const searchContainerRef = useRef(null); // Ref for the search container
+	const searchContainerRef = useRef(null);
 	const navigate = useNavigate();
 
 	const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -44,7 +43,6 @@ function Header() {
 		);
 	});
 
-	// At the top of your Header component
 	useEffect(() => {
 		// On mount, set body class based on cookie
 		const darkModeCookie = document.cookie
@@ -59,7 +57,7 @@ function Header() {
 	}, []);
 
 	// Toggles
-	const accountContainerRef = useRef(null); // <-- Add this ref
+	const accountContainerRef = useRef(null);
 	const toggleAccount = () => setAccountOpen(!accountOpen);
 
 	const toggleDarkMode = () => {
@@ -149,7 +147,7 @@ function Header() {
 						<div className="right-container">
 							<div
 								className={`account-container ${accountOpen ? "open" : ""}`}
-								ref={accountContainerRef} // <-- Attach the ref here
+								ref={accountContainerRef}
 							>
 								<button
 									className="btn btn-primary account-toggle"
@@ -212,7 +210,7 @@ function Header() {
 
 							<div
 								className={`search-container ${searchOpen ? "open" : ""}`}
-								ref={searchContainerRef} // Attach the ref to the search container
+								ref={searchContainerRef}
 							>
 								<Col>
 									<button
@@ -241,7 +239,7 @@ function Header() {
 														(result.title || result.name || "").length > 35
 															? (result.title || result.name).substring(0, 30) + "..."
 															: result.title || result.name;
-													// Determine type and id
+													
 													const type = result.media_type === "tv" ? "tvseries" : "movie";
 													const id = result.id;
 													return (
