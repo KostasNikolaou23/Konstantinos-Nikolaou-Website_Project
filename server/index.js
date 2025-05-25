@@ -540,55 +540,6 @@ app.get("/api/user/profile/:username", async (req, res) => {
 
 // Achievements API
 // ----------------------------------
-// Get achievements of user
-app.get("/api/achievements/get/:userID", async (req, res) => {
-	const userID = req.params.userID;
-
-	// Validate input
-	if (!userID) {
-		return res.status(400).json({ message: "User ID is required" });
-	}
-
-	try {
-		const [rows] = await db.query(
-			"SELECT achievement_id FROM user_achievements WHERE user_id = ?",
-			[userID]
-		);
-
-		if (rows.length === 0) {
-			return res
-				.status(404)
-				.json({ message: "No achievements found for this user" });
-		}
-
-		res.json(rows);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
-});
-
-// Give achievement to user
-app.post("/api/achievements/set", async (req, res) => {
-	const { userID, achievementID } = req.body;
-
-	// Validate input
-	if (!userID || !achievementID) {
-		return res
-			.status(400)
-			.json({ message: "User ID and Achievement ID are required" });
-	}
-
-	try {
-		await db.query(
-			"INSERT INTO user_achievements (user_id, achievement_id) VALUES (?, ?)",
-			[userID, achievementID]
-		);
-		res.status(201).json({ message: "Achievement given to user" });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
-});
-
 // Get top 50 users with most achievements
 app.post("/api/user/achievements/top", async (req, res) => {
 	// Validate input
