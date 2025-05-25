@@ -71,16 +71,28 @@ app.get("/api/analytics/user/:userId", async (req, res) => {
 	}
 
 	try {
-		const [movieClicks] = await analytica.getUserMovieClicks(userId);
-		const [tvSeriesClicks] = await analytica.getUserTvSeriesClicks(userId);
-		const [kidsClicks] = await analytica.getUserKidsClicks(userId);
-		const [documentaryClicks] = await analytica.getUserDocumentaryClicks(userId);
+		const movieClicksArr = await analytica.getUserMovieClicks(userId);
+		const tvSeriesClicksArr = await analytica.getUserTvSeriesClicks(userId);
+		const kidsClicksArr = await analytica.getUserKidsClicks(userId);
+		const documentaryClicksArr = await analytica.getUserDocumentaryClicks(userId);
 
 		res.json({
-			movie_clicks: movieClicks[0].movie_clicks,
-			tv_series_clicks: tvSeriesClicks[0].tv_series_clicks,
-			kids_clicks: kidsClicks[0].kids_clicks,
-			documentary_clicks: documentaryClicks[0].documentary_clicks,
+			movie_clicks:
+				Array.isArray(movieClicksArr) && movieClicksArr[0]?.movie_clicks != null
+					? movieClicksArr[0].movie_clicks
+					: 0,
+			tv_series_clicks:
+				Array.isArray(tvSeriesClicksArr) && tvSeriesClicksArr[0]?.tv_series_clicks != null
+					? tvSeriesClicksArr[0].tv_series_clicks
+					: 0,
+			kids_clicks:
+				Array.isArray(kidsClicksArr) && kidsClicksArr[0]?.kids_clicks != null
+					? kidsClicksArr[0].kids_clicks
+					: 0,
+			documentary_clicks:
+				Array.isArray(documentaryClicksArr) && documentaryClicksArr[0]?.documentary_clicks != null
+					? documentaryClicksArr[0].documentary_clicks
+					: 0,
 		});
 	} catch (error) {
 		res.status(500).json({ error: error.message });
