@@ -3,8 +3,8 @@ const db = require("./db"); // Assuming you have a database module to handle DB 
 const jamesbond_movies = [
 	646,
 	657,
-	658, //dr. no
-	660, //thunderball
+	658,
+	660,
 	667,
 	668,
 	681,
@@ -64,6 +64,7 @@ async function getContentKeywords(mvdbID, type) {
 }
 
 // Achievement Functions
+// ------------------------------------------
 // Watch 100 movies
 async function thisistheendRewarder(userId) {
     // Check if achievement already exists

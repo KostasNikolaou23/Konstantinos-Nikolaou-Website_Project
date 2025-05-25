@@ -1,8 +1,7 @@
 import {
 	BrowserRouter as Router,
 	Routes,
-	Route,
-	useParams,
+	Route
 } from "react-router-dom";
 
 import Header from "./Components/Header";

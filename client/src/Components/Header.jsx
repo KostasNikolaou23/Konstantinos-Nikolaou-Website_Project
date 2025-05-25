@@ -9,7 +9,6 @@ import { getSearchResults } from "./API";
 import { useNavigate } from "react-router-dom";
 
 function Header() {
-	const [menuOpen, setMenuOpen] = useState(false);
 	const [searchOpen, setSearchOpen] = useState(false);
 	const [searchText, setSearchText] = useState("");
 	const [searchResults, setSearchResults] = useState([]);
@@ -17,7 +16,6 @@ function Header() {
 	const searchContainerRef = useRef(null);
 	const navigate = useNavigate();
 
-	const toggleMenu = () => setMenuOpen(!menuOpen);
 	const toggleSearch = () => setSearchOpen(!searchOpen);
 
 	const handleSearchKeyDown = async (event) => {
