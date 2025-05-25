@@ -443,7 +443,8 @@ app.post("/api/user/register", async (req, res) => {
 			"INSERT INTO users (email, username, password) VALUES (?, ?, ?)",
 			[email, username, hashedPassword]
 		);
-		res.status(201).json({ id: result.insertId });
+		console.log("New user registered:", result.insertId);
+		res.status(201).json({ message: "Register successful!", id: result.insertId });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -481,7 +482,7 @@ app.post("/api/user/login", async (req, res) => {
 
 			// Set the session cookie
 			res.cookie("session", sessionId, { httpOnly: true, secure: false });
-			res.status(200).json({ message: "Login successful" });
+			res.status(200).json({ message: "Login successful", sessionId: sessionId });
 		} else {
 			res.status(401).json({ message: "Invalid credentials" });
 		}
@@ -490,42 +491,6 @@ app.post("/api/user/login", async (req, res) => {
 	}
 });
 
-// Check session
-app.get("/api/user/checksession", async (req, res) => {
-	const sessionId = req.cookies.session;
-
-	if (!sessionId) {
-		return res.status(401).json({ message: "No session found" });
-	}
-
-	try {
-		const [rows] = await db.query("SELECT * FROM sessions WHERE identifier = ?", [
-			sessionId,
-		]);
-
-		// if session doesnt exist
-		if (rows.length === 0) {
-			// Session does not exist
-			return res.status(401).json({ message: "Session does not exist" });
-		} else if (rows.length > 0) {
-			// Session exists
-
-			// Time check
-			const currentTime = secure.getCurrentUnixTime();
-			const session = rows[0];
-			if (session.until < currentTime) {
-				// Session has expired
-				await db.query("DELETE FROM sessions WHERE identifier = ?", [sessionId]);
-				return res.status(401).json({ message: "Session has expired" });
-			}
-
-			// Else, session is valid
-			return res.status(200).json({ message: "Session is valid" });
-		}
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
-});
 
 // Get UserID and Username from session
 app.get("/api/user/getsession", async (req, res) => {
